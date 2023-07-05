@@ -141,8 +141,6 @@ All packages used in this file can be directly installed from the Comprehensive 
 ```{r message = FALSE}
 library(tidyverse)
 library(ggpubr)
-library(effectsize)
-library(pwr)
 library(emmeans)
 library(ordinal)
 ```
@@ -309,7 +307,7 @@ dat.aro.so.PILOT <- clmm_generate_data(n_participants = 10000,
 
 We then merged these four data frames to obtain a simulated data frame.
 
-```{r message = FALSE}
+```{r cache = TRUE, message = FALSE}
 dat.sim.PILOT <- left_join(bind_rows(dat.den.gr.PILOT, dat.den.so.PILOT),
                            bind_rows(dat.aro.gr.PILOT, dat.aro.so.PILOT),
                            relationship = "many-to-many") |> 
@@ -446,11 +444,21 @@ dat.aro.so <- clmm_generate_data(n_participants = 10000,
 
 Again, we then merged these four data frames to obtain a final simulated data frame.
 
-```{r message = FALSE}
+```{r message=FALSE, cache=TRUE}
 dat.sim <- left_join(bind_rows(dat.den.gr, dat.den.so),
                      bind_rows(dat.aro.gr, dat.aro.so),
                      relationship = "many-to-many") |> 
   mutate(Tempo = fct_relevel(Tempo, c("Low", "High")))
+
+# Assign unique id to pairs
+uniqueval <- unique(dat.sim[, c("Participant", "Music.country", "Solo.group")])
+dat.sim$groupid <- 0
+for (i in 1:dim(uniqueval)[1]) {
+  idx <- dat.sim$Participant == uniqueval$Participant[i] & 
+    dat.sim$Music.country == uniqueval$Music.country[i] & 
+    dat.sim$Solo.group == uniqueval$Solo.group[i]
+  dat.sim$groupid[idx] <- i
+}
 ```
 
 The distribution of these simulated data is represented in \@ref(fig:final-sim)
@@ -535,7 +543,7 @@ For each random sample, we adjusted the number of participants per country (in t
 
 ## Select random samples
 
-```{r}
+```{r cache = TRUE}
 # Get participant IDs
 part <- dat.sim  |> 
   group_by(Participant.country) |>
@@ -566,7 +574,7 @@ clmm.comps.den <- data.frame(Sample = 1:num_sims.clmm) #create empty data frame
 for (i in 1:num_sims.clmm){
   samp <- samples.clmm.long |>
     filter(sample.clmm == i)
-  tryCatch(mod <- clmm(Density.tempo ~ Tempo  *Solo.group * Participant.country * Music.country + 
+  tryCatch(mod <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
                          (1 + Tempo | Participant), data = samp),
            error = function(e) {
              message('Error')
@@ -596,7 +604,7 @@ clmm.comps.aro <- data.frame(Sample = 1:num_sims.clmm) #create empty dataframe
 for (i in 1:num_sims.clmm){
   samp <- samples.clmm.long |>
     filter(sample.clmm == i)
-  tryCatch(mod <- clmm(Arousal.tempo ~ Tempo  *Solo.group * Participant.country * Music.country + 
+  tryCatch(mod <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
                          (1 + Tempo | Participant), data = samp),
            error = function(e) {
              message('Error')
@@ -618,13 +626,11 @@ power.clmm.aro <- sum(clmm.comps.aro$`Statistical signicance` == "Significant")/
 
 ## Achieved power
 
-```{r}
+```{r fig.cap = "Histogram of *p*-values for the contrasts between Tempo conditions (Low, High) for all simulations. The estatistical power is the proportion of significant results. Significant results are in red."}
 p5a <- ggplot(clmm.comps.den, aes(x = p, fill = `Statistical signicance`)) +
   scale_fill_hue(direction = -1) +
   geom_histogram(bins = 1/alpha.clmm, breaks = seq(0, 1, alpha.clmm)) +
-  labs(y = "Count", x = "p-value", title = "Density",
-       subtitle = "Call: clmm(Density.tempo ~ Tempo  *Solo.group * Participant.country * Music.country +
-       (1 + Tempo | Participant))") +
+  labs(y = "Count", x = "p-value", title = "Density") +
   annotate("text", x = 0.5, y = sum(clmm.comps.den$`Statistical signicance` == "Significant") * 0.9,
            label = paste0("Power = ", round(power.clmm.den, 3),
                           "\nSample size = ", sample_size.clmm,
@@ -633,9 +639,7 @@ p5a <- ggplot(clmm.comps.den, aes(x = p, fill = `Statistical signicance`)) +
 p5b <- ggplot(clmm.comps.aro, aes(x = p, fill = `Statistical signicance`)) +
   scale_fill_hue(direction = -1) +
   geom_histogram(bins = 1/alpha.clmm, breaks = seq(0, 1, alpha.clmm)) +
-  labs(y = "Count", x = "p-value", title = "Arousal",
-       subtitle = "Call: clmm(Arousal.tempo ~ Tempo  *Solo.group * Participant.country * Music.country +
-       (1 + Tempo | Participant))") +
+  labs(y = "Count", x = "p-value", title = "Arousal") +
   annotate("text", x = 0.5, y = sum(clmm.comps.aro$`Statistical signicance` == "Significant") * 0.9, 
            label = paste0("Power = ", round(power.clmm.aro, 3), 
                           "\nSample size = ", sample_size.clmm, 
@@ -643,15 +647,76 @@ p5b <- ggplot(clmm.comps.aro, aes(x = p, fill = `Statistical signicance`)) +
 
 p5 <- ggarrange(p5a, p5b,
                 common.legend = TRUE,
-                legend = "bottom")
+                legend = "bottom",
+                labels = "AUTO")
 p5
 ```
 
 # Analysis script
 
-Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is to make sure that the data structure is adequate to fit the modle, and to plan in advance all the code.
+Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
 
-because only the effect of Tempo was predicted *a-priori*, all other effects are completely random. plan all analyses that will be performed.
+```{r cache = TRUE}
+# Select a random sample
+ex.data <- samples.clmm.long %>%
+  filter(sample.clmm == sample(1:num_sims.clmm, 1, replace = TRUE))
+```
+
+Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
+
+```{r eval = FALSE, cache = TRUE, fig.cap = "Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed lines represent the within-subject effect of the Tempo manipulation."}
+p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, color = Participant.country, shape = Music.country)) +
+  geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
+  geom_point(position = position_dodge(0.3), size = 3) +
+  geom_line(aes(group = factor(groupid)), size = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
+  labs(y= "Density", x = "Tempo", title = "Density") +
+  scale_x_discrete(limits = c("Low", "High")) + 
+  scale_size_discrete(breaks = c("Solo", "Group")) + 
+  theme(plot.title = element_text(face = "bold", hjust = 0.5)) + 
+  facet_wrap(~Solo.group)
+
+p6b <- ggplot(ex.data, aes(x = Tempo, y = Arousal.tempo, color = Participant.country, shape = Music.country)) +
+   geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
+  geom_point(position = position_dodge(0.3), size = 3) +
+  geom_line(aes(group = factor(groupid)), size = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
+  labs(y= "Arousal", x = "Tempo", title = "Arousal") +
+  scale_x_discrete(limits = c("Low", "High")) + 
+  scale_size_discrete(breaks = c("Solo", "Group")) + 
+  theme(plot.title = element_text(face = "bold", hjust = 0.5)) + 
+  facet_wrap(~Solo.group)
+
+p6 <- ggarrange(p6a, p6b,
+                common.legend = TRUE,
+                legend = "bottom")
+p6
+```
+
+We fitted the model with the same structure: `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. Estimated marginal means and confidence intervals for this simulation are represented in \@ref(fig:mod-ex).
+
+```{r mod-ex, warning = FALSE, cache = TRUE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo from a ramdomly selected, simulated sample. Columns represent data from simulated participants from each country, while rows represent the simulated response to music from each country."}
+# Density model
+model.den <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + (1 | Participant), 
+              data = ex.data,
+              contrasts = TRUE)
+
+# Arousal model
+model.aro <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + (1 | Participant), 
+              data = ex.data,
+              contrasts = TRUE)
+
+p7a <- emmip(model.den, Solo.group ~ Tempo | Participant.country + Music.country,
+      CIs = TRUE) +
+  labs(title = "Density")
+
+p7b <- emmip(model.aro, Solo.group ~ Tempo | Participant.country + Music.country,
+      CIs = TRUE) +
+  labs(title = "Arousal")
+
+p7 <- ggarrange(p7a, p7b,
+                common.legend = TRUE,
+                legend = "bottom")
+p7
+```
 
 ```{r echo = FALSE}
 beepr::beep(sound = 8)
