@@ -1,0 +1,1036 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  bookmarksnumbered]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{48,48,48}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.81,0.69}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{\textbf{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.94,0.87,0.69}{#1}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.87,0.87,0.75}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.86,0.86,0.80}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.76,0.75,0.62}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.75,0.75,0.82}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.94,0.94,0.56}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.94,0.87,0.69}{#1}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.94,0.94,0.82}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.94,0.94,0.56}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{1.00,0.81,0.69}{\textbf{#1}}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.80,0.58,0.58}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.80,0.58,0.58}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.80,0.58,0.58}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{caption} \usepackage{float} \floatplacement{figure}{H} \usepackage[utf8]{inputenc} \usepackage{fancyhdr} \pagestyle{fancy} \usepackage{hanging} \lhead{Hadavi et al.} \rhead{\textit{Power analysis}} \renewcommand{\abstractname}{Description} \usepackage{orcidlink} \newcommand{\opensupplement}{\setcounter{table}{0} \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}} \newcommand{\closesupplement}{\setcounter{table}{0} \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{\arabic{figure}}} \usepackage{multirow,booktabs,setspace} \DeclareCaptionLabelSeparator{point}{. } \DeclareCaptionLabelSeparator{point}{. } \captionsetup[table]{labelfont=bf, textfont=it, format=plain, labelsep=point, skip=5pt} \captionsetup[figure]{labelfont=bf, format=plain, justification=justified, singlelinecheck=false, labelsep=point, skip=5pt}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan {[}Stage 1 Registered Report{]}},
+  pdfauthor={Shafagh Hadavi 1; Junji Kuroda2; Taiki Shimozono2; Juan David Leongómez 3; Patrick E. Savage 1},
+  colorlinks=true,
+  linkcolor={gray},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan {[}Stage 1 Registered Report{]}}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Code and analyses: Simulation-based power analysis}
+\author{Shafagh Hadavi \orcidlink{0009-0008-1184-7238}\textsuperscript{1} \and Junji Kuroda\textsuperscript{2} \and Taiki Shimozono\textsuperscript{2} \and Juan David Leongómez \orcidlink{0000-0002-0092-6298}\textsuperscript{3} \and Patrick E. Savage \orcidlink{0000-0001-6996-7496}\textsuperscript{1}}
+\date{04 July, 2023}
+
+\begin{document}
+\maketitle
+
+\textsuperscript{1} Graduate School of Media and Policy / Faculty of Environment and Information Studies, Keio University, Fujisawa, Japan.\\
+\textsuperscript{2} YAMAHA Corporation, Hamamatsu, Japan.\\
+\textsuperscript{3} Human Behaviour and Evolution Lab, Faculty of Psychology, Universidad El Bosque, Bogota, Colombia.
+
+\begin{center}
+Correspondence to:
+SH: \href{mailto:shafagh@keio.jp}{shafagh@keio.jp}. 
+PES: \href{mailto:psavage@sfc.keio.ac.jp}{psavage@sfc.keio.ac.jp}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\textbf{Descripción}
+\end{center}
+
+\par
+\begingroup
+\leftskip3em
+\rightskip\leftskip
+
+This document contains all code, and step by step explanations for all analyses, figures and tables (including supplementary figures and tables) for:
+
+\begin{hangparas}{.25in}{1}
+hadavi, S., Kuroda, J., Shimozono, T., Leongómez, J. D., \& Savage, P. E. (in prep). \textit{Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan} [Stage 1 Registered Report]. \url{https://doi.org/10.31234/osf.io/26yg5}
+\end{hangparas}
+
+Data available from the Open Science Framework (OSF): \url{https://doi.org/10.XXXXX/OSF.IO/XXXXX}. This document and its underlying code were created in \texttt{R\ Markdown} by Juan David Leongómez using \LaTeX.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\par
+\endgroup
+
+{\hypersetup{hidelinks}
+\setcounter{tocdepth}{6}
+\tableofcontents
+}
+\opensupplement
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{preliminaries}{%
+\section{Preliminaries}\label{preliminaries}}
+
+\hypertarget{load-packages}{%
+\subsection{Load packages}\label{load-packages}}
+
+This file was created using \texttt{knitr} (\protect\hyperlink{ref-knitrcit}{Xie, 2014}), mostly using \texttt{tidyverse} (\protect\hyperlink{ref-tidyversecit}{Wickham et al., 2019}) syntax. As such, data wrangling was mainly done using packages such as \texttt{dplyr} (\protect\hyperlink{ref-dplyrcit}{Wickham et al., 2022}), and most figures were created using \texttt{ggplot2} (\protect\hyperlink{ref-ggplotcit}{Wickham, 2016}).
+
+Cumulative Link Mixed Models (CLMM) were fitted using \texttt{ordinal} (\protect\hyperlink{ref-ordinalcit}{Christensen, 2022}), and contrasts and interactions were explored using \texttt{emmeans} (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}).
+
+All packages used in this file can be directly installed from the Comprehensive R Archive Network (\href{https://cran.r-project.org/}{CRAN}). For a complete list of packages used to create this file, and their versions, see section \ref{session}, at the end of the document.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(ggpubr)}
+\FunctionTok{library}\NormalTok{(effectsize)}
+\FunctionTok{library}\NormalTok{(pwr)}
+\FunctionTok{library}\NormalTok{(emmeans)}
+\FunctionTok{library}\NormalTok{(ordinal)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{custom-functions}{%
+\subsection{Custom functions}\label{custom-functions}}
+
+To simulate ordinal data with a specific distribution, we used the function \texttt{clmm\_generate\_data}, created by Borders et al. (\protect\hyperlink{ref-bordersPowerAnalysisOrdinal2022}{2022}) as part of their tutorial (\url{https://osf.io/e6usd/}). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the \texttt{clmm-power-library.R} file (\url{https://osf.io/tjpkf}). Here, it is run from source, but in a version oif the file changing the \texttt{mc.cores} parameter to 1, to avoid errors.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{source}\NormalTok{(}\StringTok{"clmm{-}power{-}library.R"}\NormalTok{, }\AttributeTok{local =}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{knit\_global}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
+\hypertarget{pilot-data}{%
+\subsection{Pilot data}\label{pilot-data}}
+
+To simulate data, first we looked at the distribution of the pilot data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load data}
+\NormalTok{sh1 }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"../sh1.csv"}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Tempo =} \FunctionTok{str\_replace}\NormalTok{(Tempo, }\StringTok{"low"}\NormalTok{, }\StringTok{"Low"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Tempo =} \FunctionTok{str\_replace}\NormalTok{(Tempo, }\StringTok{"high"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate\_if}\NormalTok{(is.character,as.factor) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Tempo =} \FunctionTok{fct\_relevel}\NormalTok{(Tempo, }\FunctionTok{c}\NormalTok{(}\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)))}
+
+\CommentTok{\# Assign unique id to pairs}
+\NormalTok{uniqueval }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(sh1[, }\FunctionTok{c}\NormalTok{(}\StringTok{"Participant"}\NormalTok{, }\StringTok{"Music.country"}\NormalTok{, }\StringTok{"Solo.group"}\NormalTok{)])}
+\NormalTok{sh1}\SpecialCharTok{$}\NormalTok{groupid }\OtherTok{\textless{}{-}} \DecValTok{0}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{dim}\NormalTok{(uniqueval)[}\DecValTok{1}\NormalTok{]) \{}
+\NormalTok{  idx }\OtherTok{\textless{}{-}}\NormalTok{ sh1}\SpecialCharTok{$}\NormalTok{Participant }\SpecialCharTok{==}\NormalTok{ uniqueval}\SpecialCharTok{$}\NormalTok{Participant[i] }\SpecialCharTok{\&} 
+\NormalTok{    sh1}\SpecialCharTok{$}\NormalTok{Music.country }\SpecialCharTok{==}\NormalTok{ uniqueval}\SpecialCharTok{$}\NormalTok{Music.country[i] }\SpecialCharTok{\&} 
+\NormalTok{    sh1}\SpecialCharTok{$}\NormalTok{Solo.group }\SpecialCharTok{==}\NormalTok{ uniqueval}\SpecialCharTok{$}\NormalTok{Solo.group[i]}
+\NormalTok{  sh1}\SpecialCharTok{$}\NormalTok{groupid[idx] }\OtherTok{\textless{}{-}}\NormalTok{ i}
+\NormalTok{\}}
+
+\CommentTok{\# Select only relevant variables}
+\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ sh1  }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{9}\NormalTok{,}\DecValTok{20}\NormalTok{)}
+
+\CommentTok{\# Plot distribution of results for density ratings}
+\NormalTok{p1a }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ density.tempo, }\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density),}
+                       \AttributeTok{fill =}\NormalTok{ Tempo, }\AttributeTok{color =}\NormalTok{ Tempo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_colour\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y=} \StringTok{"Probability"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Rating"}\NormalTok{, }\AttributeTok{title =} \StringTok{"Density"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{format}\NormalTok{(}\FunctionTok{after\_stat}\NormalTok{(density), }\AttributeTok{digits =} \DecValTok{1}\NormalTok{), }\AttributeTok{y=} \FunctionTok{after\_stat}\NormalTok{(density)), }
+            \AttributeTok{stat=} \StringTok{"bin"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{, }
+            \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.2}\NormalTok{,}
+            \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Solo.group)}
+
+\CommentTok{\# Plot distribution of results for arousal ratings}
+\NormalTok{p1b }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ arousal.tempo, }\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density),}
+                       \AttributeTok{fill =}\NormalTok{ Tempo, }\AttributeTok{color =}\NormalTok{ Tempo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_colour\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y=} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{x =} \StringTok{"Rating"}\NormalTok{, }\AttributeTok{title =} \StringTok{"Arousal"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{format}\NormalTok{(}\FunctionTok{after\_stat}\NormalTok{(density), }\AttributeTok{digits =} \DecValTok{1}\NormalTok{), }\AttributeTok{y=} \FunctionTok{after\_stat}\NormalTok{(density)), }
+            \AttributeTok{stat=} \StringTok{"bin"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{, }
+            \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.2}\NormalTok{,}
+            \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Solo.group)}
+
+\CommentTok{\# Arrange plots}
+\NormalTok{p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggarrange}\NormalTok{(p1a, p1b,}
+                \AttributeTok{common.legend =} \ConstantTok{TRUE}\NormalTok{,}
+                \AttributeTok{legend =} \StringTok{"bottom"}\NormalTok{,}
+                \AttributeTok{labels =} \StringTok{"AUTO"}\NormalTok{)}
+\NormalTok{p1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-3-1.pdf}
+\caption{\label{fig:unnamed-chunk-3}Distribution of results from pilot data for ratings of both Density (\textbf{A}) and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low).}
+\end{figure}
+
+\hypertarget{data-simulation}{%
+\subsection{Data simulation}\label{data-simulation}}
+
+While basing a power analysis on pilot data is problematic and can bias the sample size estimation (see e.g., \protect\hyperlink{ref-albersWhenPowerAnalyses2018}{Albers \& Lakens, 2018}), we used this distribution as a starting point.
+
+The \texttt{clmm\_generate\_data} function (\protect\hyperlink{ref-bordersPowerAnalysisOrdinal2022}{Borders et al., 2022}) allows to simulate data with random and fixed effects with an ordinal outcome. In this case, we simulated data for Tempo, the within-subject variable for which there was an \emph{a-priori} prediction, replicating the distribution of the first level (Low) using a specified probability of each rating score (using the argument \texttt{control\_distribution}). The second level of that within-subject variable (Tempo = High) is generated based on a hypothesized effect (using the argument \texttt{effect}). Other important factors such as participant country and music country were randomly assigned, as there are no \emph{a-priori} predictions regarding these factors.
+
+\hypertarget{replication-of-the-pilot-data-distribution}{%
+\subsubsection{Replication of the pilot data distribution}\label{replication-of-the-pilot-data-distribution}}
+
+To obtain distributions similar to the probabilities observed in the pilot data, we first simulated individual data for Density and Arousal ratings, separated by Instrumentation type (Group, Solo). In all cases, we simulated data from 10000 participants, and changed the value assigned to the \texttt{effect} argument until the distribution of the second level of the within-subject variable (Tempo = High) resembled the pilot data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Density ratings for group music}
+\NormalTok{dat.den.gr.PILOT }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                           \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                           \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{04}\NormalTok{, .}\DecValTok{11}\NormalTok{, .}\DecValTok{59}\NormalTok{, .}\DecValTok{22}\NormalTok{, .}\DecValTok{04}\NormalTok{),}
+                           \AttributeTok{effect =} \FloatTok{3.2}\NormalTok{,}
+                           \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                           \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                           \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Density.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Group"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+
+\CommentTok{\# Density ratings for solo music}
+\NormalTok{dat.den.so.PILOT }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                                 \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                                 \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{55}\NormalTok{, .}\DecValTok{30}\NormalTok{, .}\DecValTok{04}\NormalTok{, .}\DecValTok{10}\NormalTok{, .}\DecValTok{01}\NormalTok{),}
+                                 \AttributeTok{effect =} \FloatTok{1.2}\NormalTok{,}
+                                 \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                                 \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Density.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Solo"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+
+\CommentTok{\# Arousal ratings for group music}
+\NormalTok{dat.aro.gr.PILOT }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                                 \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                                 \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{11}\NormalTok{, .}\DecValTok{11}\NormalTok{, .}\DecValTok{52}\NormalTok{, .}\DecValTok{19}\NormalTok{, .}\DecValTok{07}\NormalTok{),}
+                                 \AttributeTok{effect =} \FloatTok{3.1}\NormalTok{,}
+                                 \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                                 \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Arousal.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Group"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+
+\CommentTok{\# Arousal ratings for solo music}
+\NormalTok{dat.aro.so.PILOT }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                                 \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                                 \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{43}\NormalTok{, .}\DecValTok{41}\NormalTok{, .}\DecValTok{14}\NormalTok{, .}\DecValTok{01}\NormalTok{, .}\DecValTok{01}\NormalTok{),}
+                                 \AttributeTok{effect =} \FloatTok{1.6}\NormalTok{,}
+                                 \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                                 \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Arousal.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Solo"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+We then merged these four data frames to obtain a simulated data frame.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.sim.PILOT }\OtherTok{\textless{}{-}} \FunctionTok{left\_join}\NormalTok{(}\FunctionTok{bind\_rows}\NormalTok{(dat.den.gr.PILOT, dat.den.so.PILOT),}
+                           \FunctionTok{bind\_rows}\NormalTok{(dat.aro.gr.PILOT, dat.aro.so.PILOT),}
+                           \AttributeTok{relationship =} \StringTok{"many{-}to{-}many"}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Tempo =} \FunctionTok{fct\_relevel}\NormalTok{(Tempo, }\FunctionTok{c}\NormalTok{(}\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+The distribution of this replication of the pilot data distribution is represented in \ref{fig:pilot-rep}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot distribution of results for density ratings}
+\NormalTok{p2a }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dat.sim.PILOT, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Density.tempo, }\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density),}
+                                 \AttributeTok{fill =}\NormalTok{ Tempo, }\AttributeTok{color =}\NormalTok{ Tempo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_colour\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y=} \StringTok{"Probability"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Rating"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{format}\NormalTok{(}\FunctionTok{after\_stat}\NormalTok{(density), }\AttributeTok{digits =} \DecValTok{1}\NormalTok{), }\AttributeTok{y=} \FunctionTok{after\_stat}\NormalTok{(density)), }
+            \AttributeTok{stat=} \StringTok{"bin"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{, }
+            \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.2}\NormalTok{,}
+            \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Solo.group)}
+
+\CommentTok{\# Plot distribution of results for arousal ratings}
+\NormalTok{p2b }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dat.sim.PILOT, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Arousal.tempo, }\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density),}
+                                 \AttributeTok{fill =}\NormalTok{ Tempo, }\AttributeTok{color =}\NormalTok{ Tempo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_colour\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y=} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{x =} \StringTok{"Rating"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{format}\NormalTok{(}\FunctionTok{after\_stat}\NormalTok{(density), }\AttributeTok{digits =} \DecValTok{1}\NormalTok{), }\AttributeTok{y=} \FunctionTok{after\_stat}\NormalTok{(density)), }
+            \AttributeTok{stat=} \StringTok{"bin"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{, }
+            \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.2}\NormalTok{,}
+            \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Solo.group)}
+
+\CommentTok{\# Arrange plots}
+\NormalTok{p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggarrange}\NormalTok{(p2a }\SpecialCharTok{+}
+                  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"Density"}\NormalTok{), }
+\NormalTok{                p2b  }\SpecialCharTok{+}
+                  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"Arousal"}\NormalTok{),}
+                \AttributeTok{common.legend =} \ConstantTok{TRUE}\NormalTok{,}
+                \AttributeTok{legend =} \StringTok{"bottom"}\NormalTok{,}
+                \AttributeTok{labels =} \StringTok{"AUTO"}\NormalTok{)}
+\NormalTok{p2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{Power_analysis_files/figure-latex/pilot-rep-1.pdf}
+\caption{\label{fig:pilot-rep}Distribution of results from a simulated replication of the pilot data distribution for ratings of both Density (\textbf{A}) and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low).}
+\end{figure}
+
+\hypertarget{simulation-of-data-with-a-more-conservative-effect}{%
+\subsubsection{Simulation of data with a more conservative effect}\label{simulation-of-data-with-a-more-conservative-effect}}
+
+While the data simulated in the previous section resembled the distribution of the pilot data, using these data would be problematic for at least two reasons:
+
+First, the effects of Tempo were extremely large (3.2, 1.2, 3.1, 1.6), particularly for ratings of Group instrumentation (3.2, and 3.1). With such differences, a very high statistical power of about \(1 - \beta = 0.95\) can be achieved with 2 or 3 participants. And second, as mentioned before, estimating effects from pilot data is problematic, as it biases the results (\protect\hyperlink{ref-albersWhenPowerAnalyses2018}{Albers \& Lakens, 2018}).
+
+For this reason, we decided to maintain the distributions of probabilities for the first Tempo level (Low), as it is a goiod starting point to estimate the distribution of ratings that participants would assign, but simulated the second level (Tempo = High) with a much more conservative effect of 1 in all cases.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Density ratings for group music}
+\NormalTok{dat.den.gr }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                                 \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                                 \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{04}\NormalTok{, .}\DecValTok{11}\NormalTok{, .}\DecValTok{59}\NormalTok{, .}\DecValTok{22}\NormalTok{, .}\DecValTok{04}\NormalTok{),}
+                                 \AttributeTok{effect =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                                 \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Density.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Group"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+
+\CommentTok{\# Density ratings for solo music}
+\NormalTok{dat.den.so }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                                 \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                                 \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{55}\NormalTok{, .}\DecValTok{30}\NormalTok{, .}\DecValTok{04}\NormalTok{, .}\DecValTok{10}\NormalTok{, .}\DecValTok{01}\NormalTok{),}
+                                 \AttributeTok{effect =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                                 \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Density.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Solo"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+
+\CommentTok{\# Arousal ratings for group music}
+\NormalTok{dat.aro.gr }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                                 \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                                 \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{11}\NormalTok{, .}\DecValTok{11}\NormalTok{, .}\DecValTok{52}\NormalTok{, .}\DecValTok{19}\NormalTok{, .}\DecValTok{07}\NormalTok{),}
+                                 \AttributeTok{effect =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                                 \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Arousal.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Group"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+
+\CommentTok{\# Arousal ratings for solo music}
+\NormalTok{dat.aro.so }\OtherTok{\textless{}{-}} \FunctionTok{clmm\_generate\_data}\NormalTok{(}\AttributeTok{n\_participants =} \DecValTok{10000}\NormalTok{,}
+                                 \AttributeTok{n\_trials =} \DecValTok{3}\NormalTok{,}
+                                 \AttributeTok{control\_distribution =} \FunctionTok{c}\NormalTok{(.}\DecValTok{43}\NormalTok{, .}\DecValTok{41}\NormalTok{, .}\DecValTok{14}\NormalTok{, .}\DecValTok{01}\NormalTok{, .}\DecValTok{01}\NormalTok{),}
+                                 \AttributeTok{effect =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{participant\_variation =} \DecValTok{1}\NormalTok{,}
+                                 \AttributeTok{within\_subject =} \ConstantTok{TRUE}\NormalTok{,}
+                                 \AttributeTok{control\_weight =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{group =} \FunctionTok{ifelse}\NormalTok{(group }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Arousal.tempo =}\NormalTok{ pas) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Tempo =}\NormalTok{ group) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  dplyr}\SpecialCharTok{::}\FunctionTok{rename}\NormalTok{(}\AttributeTok{Participant =}\NormalTok{ id) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"p"}\NormalTok{, Participant)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pair =} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{, }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Participant.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{each =} \DecValTok{10000}\NormalTok{), }\DecValTok{2}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Music.country =} \FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Iran"}\NormalTok{, }\StringTok{"Canada"}\NormalTok{, }\StringTok{"Japan"}\NormalTok{), }\AttributeTok{times =} \DecValTok{20000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Solo.group =} \FunctionTok{rep}\NormalTok{(}\StringTok{"Solo"}\NormalTok{, }\AttributeTok{TIMES =} \DecValTok{60000}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+Again, we then merged these four data frames to obtain a final simulated data frame.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dat.sim }\OtherTok{\textless{}{-}} \FunctionTok{left\_join}\NormalTok{(}\FunctionTok{bind\_rows}\NormalTok{(dat.den.gr, dat.den.so),}
+                     \FunctionTok{bind\_rows}\NormalTok{(dat.aro.gr, dat.aro.so),}
+                     \AttributeTok{relationship =} \StringTok{"many{-}to{-}many"}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Tempo =} \FunctionTok{fct\_relevel}\NormalTok{(Tempo, }\FunctionTok{c}\NormalTok{(}\StringTok{"Low"}\NormalTok{, }\StringTok{"High"}\NormalTok{)))}
+\end{Highlighting}
+\end{Shaded}
+
+The distribution of these simulated data is represented in \ref{fig:final-sim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot distribution of results for density ratings}
+\NormalTok{p3a }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dat.sim, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Density.tempo, }\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density),}
+                           \AttributeTok{fill =}\NormalTok{ Tempo, }\AttributeTok{color =}\NormalTok{ Tempo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_colour\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y=} \StringTok{"Probability"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Rating"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{format}\NormalTok{(}\FunctionTok{after\_stat}\NormalTok{(density), }\AttributeTok{digits =} \DecValTok{1}\NormalTok{), }\AttributeTok{y=} \FunctionTok{after\_stat}\NormalTok{(density)), }
+            \AttributeTok{stat=} \StringTok{"bin"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{, }
+            \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.2}\NormalTok{,}
+            \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Solo.group)}
+
+\CommentTok{\# Plot distribution of results for arousal ratings}
+\NormalTok{p3b }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(dat.sim, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Arousal.tempo, }\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density),}
+                           \AttributeTok{fill =}\NormalTok{ Tempo, }\AttributeTok{color =}\NormalTok{ Tempo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{scale\_colour\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{position =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y=} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{x =} \StringTok{"Rating"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{format}\NormalTok{(}\FunctionTok{after\_stat}\NormalTok{(density), }\AttributeTok{digits =} \DecValTok{1}\NormalTok{), }\AttributeTok{y=} \FunctionTok{after\_stat}\NormalTok{(density)), }
+            \AttributeTok{stat=} \StringTok{"bin"}\NormalTok{, }\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{, }
+            \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.2}\NormalTok{,}
+            \AttributeTok{show.legend =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{Solo.group)}
+
+\CommentTok{\# Arrange plots}
+\NormalTok{p3 }\OtherTok{\textless{}{-}} \FunctionTok{ggarrange}\NormalTok{(p3a }\SpecialCharTok{+}
+                  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"Density"}\NormalTok{), }
+\NormalTok{                p3b  }\SpecialCharTok{+}
+                  \FunctionTok{labs}\NormalTok{(}\AttributeTok{subtitle =} \StringTok{"Arousal"}\NormalTok{),}
+                \AttributeTok{common.legend =} \ConstantTok{TRUE}\NormalTok{,}
+                \AttributeTok{legend =} \StringTok{"bottom"}\NormalTok{,}
+                \AttributeTok{labels =} \StringTok{"AUTO"}\NormalTok{)}
+\NormalTok{p3}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{Power_analysis_files/figure-latex/final-sim-1.pdf}
+\caption{\label{fig:final-sim}Distribution of results from a conservative simulated distribution for ratings of both Density (\textbf{A}) and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low).}
+\end{figure}
+
+\hypertarget{comparisons-of-the-distribuition-of-results-between-pilot-and-simulated-data}{%
+\subsection{Comparisons of the distribuition of results between pilot and simulated data}\label{comparisons-of-the-distribuition-of-results-between-pilot-and-simulated-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p4 }\OtherTok{\textless{}{-}} \FunctionTok{ggarrange}\NormalTok{(}\FunctionTok{ggarrange}\NormalTok{(p1a }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Pilot data"}\NormalTok{), }
+\NormalTok{                          p1b }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{" "}\NormalTok{),}
+                          \AttributeTok{legend =} \StringTok{"none"}\NormalTok{), }
+                \FunctionTok{ggarrange}\NormalTok{(p2a }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Simulation (pilot data replication)"}\NormalTok{), }
+\NormalTok{                          p2b }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{" "}\NormalTok{),}
+                          \AttributeTok{legend =} \StringTok{"none"}\NormalTok{),}
+                \FunctionTok{ggarrange}\NormalTok{(p3a }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Final simulation (conservative effect)"}\NormalTok{), }
+\NormalTok{                          p3b }\SpecialCharTok{+} \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{" "}\NormalTok{),}
+                          \AttributeTok{common.legend =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{legend =} \StringTok{"bottom"}\NormalTok{),}
+                \AttributeTok{common.legend =} \ConstantTok{TRUE}\NormalTok{,}
+                \AttributeTok{labels =} \StringTok{"AUTO"}\NormalTok{,}
+                \AttributeTok{nrow =} \DecValTok{3}\NormalTok{,}
+                \AttributeTok{heights =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\FloatTok{1.1}\NormalTok{))}
+\NormalTok{p4}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-8-1.pdf}
+\caption{\label{fig:unnamed-chunk-8}Distribution of results of ratings of both Density and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low). \textbf{A} pilot data; \textbf{B} simulation replicating pilot data distribution; \textbf{C} simulation with a more conservative effect.}
+\end{figure}
+
+\hypertarget{power-analysis}{%
+\section{Power analysis}\label{power-analysis}}
+
+Using the final, simulated population (\emph{N} = 10000 participants, with 6 paired observations per participant), we conducted a simulation-based power analysis. To do this, we first defined the desired number of simulations, the sample size (per country) of each simulation, and the \(\alpha\) value (significance level) for all statistical tests:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{num\_sims.clmm }\OtherTok{=} \DecValTok{100} \CommentTok{\# Number of simulations to run}
+\NormalTok{sample\_size.clmm }\OtherTok{=} \DecValTok{25} \CommentTok{\# Sample size for each simulation (number of participants per country)}
+\NormalTok{alpha.clmm }\OtherTok{=} \FloatTok{0.05} \CommentTok{\# Significance level}
+\end{Highlighting}
+\end{Shaded}
+
+Then, models were fitted from the defined 100 random samples extracted from the simulated population.
+
+From each sample, two Cumulative Link Mixed Models (CLMM) were fitted: one for Density ratings, and one for arousal ratings. All models were fitted with the following call: \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}.
+
+This is, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant.
+
+For each random sample, we adjusted the number of participants per country (in this case, \emph{n} = 25) to achieve the target statistical power of at least \(1 - \beta = 0.95\) for both the Density and Arousal models.
+
+\hypertarget{select-random-samples}{%
+\subsection{Select random samples}\label{select-random-samples}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Get participant IDs}
+\NormalTok{part }\OtherTok{\textless{}{-}}\NormalTok{ dat.sim }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(Participant.country) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(Participant) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ungroup}\NormalTok{()}
+
+\CommentTok{\# Select samples of random participants }
+\NormalTok{samples.clmm }\OtherTok{\textless{}{-}} \FunctionTok{map\_dfr}\NormalTok{(}\FunctionTok{seq\_len}\NormalTok{(num\_sims.clmm), }\SpecialCharTok{\textasciitilde{}}\NormalTok{part }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{sample\_n}\NormalTok{(sample\_size.clmm) }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{sample.clmm =} \FunctionTok{as.factor}\NormalTok{(.x)))}
+
+\CommentTok{\# Final data base of data for each participant selected for each sample}
+\NormalTok{samples.clmm.long }\OtherTok{\textless{}{-}} \FunctionTok{left\_join}\NormalTok{(samples.clmm, dat.sim, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"Participant"}\NormalTok{, }
+                                                             \StringTok{"Participant.country"}\NormalTok{),}
+                                \AttributeTok{relationship =} \StringTok{"many{-}to{-}many"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Density.tempo =} \FunctionTok{as.factor}\NormalTok{(Density.tempo)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Arousal.tempo =} \FunctionTok{as.factor}\NormalTok{(Arousal.tempo)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Tempo =} \FunctionTok{as.factor}\NormalTok{(Tempo))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{density-power-analysis}{%
+\subsection{Density power analysis}\label{density-power-analysis}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Create empty data frame}
+\NormalTok{clmm.comps.den }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Sample =} \DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_sims.clmm) }\CommentTok{\#create empty data frame}
+
+\CommentTok{\# Loop to fit a model for each random sample and extract the p{-}value of the Tempo contrasts}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_sims.clmm)\{}
+\NormalTok{  samp }\OtherTok{\textless{}{-}}\NormalTok{ samples.clmm.long }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(sample.clmm }\SpecialCharTok{==}\NormalTok{ i)}
+  \FunctionTok{tryCatch}\NormalTok{(mod }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Density.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo  }\SpecialCharTok{*}\NormalTok{Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+} 
+\NormalTok{                         (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ Tempo }\SpecialCharTok{|}\NormalTok{ Participant), }\AttributeTok{data =}\NormalTok{ samp),}
+           \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+             \FunctionTok{message}\NormalTok{(}\StringTok{\textquotesingle{}Error\textquotesingle{}}\NormalTok{)}
+             \FunctionTok{print}\NormalTok{(e)}
+\NormalTok{           \})}
+  \FunctionTok{tryCatch}\NormalTok{(comp }\OtherTok{\textless{}{-}} \FunctionTok{emmeans}\NormalTok{(mod, pairwise}\SpecialCharTok{\textasciitilde{}}\NormalTok{Tempo),}
+           \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) e, }\ConstantTok{NULL}\NormalTok{)}
+\NormalTok{  clmm.comps.den}\SpecialCharTok{$}\NormalTok{p[i] }\OtherTok{\textless{}{-}} \FunctionTok{round}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(comp}\SpecialCharTok{$}\NormalTok{contrast)}\SpecialCharTok{$}\NormalTok{p.value, }\DecValTok{3}\NormalTok{)}
+\NormalTok{  clmm.comps.den}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}}\NormalTok{[i] }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(clmm.comps.den}\SpecialCharTok{$}\NormalTok{p[i] }\SpecialCharTok{\textless{}=}\NormalTok{ alpha.clmm, }
+                                                       \StringTok{"Significant"}\NormalTok{, }\StringTok{"Non{-}significant"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate power (proportion of simulations in which the Tempo contrast was significant)}
+\NormalTok{power.clmm.den }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(clmm.comps.den}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}} \SpecialCharTok{==} \StringTok{"Significant"}\NormalTok{)}\SpecialCharTok{/}\NormalTok{num\_sims.clmm}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{arousal-power-analysis}{%
+\subsection{Arousal power analysis}\label{arousal-power-analysis}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Create empty data frame}
+\NormalTok{clmm.comps.aro }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Sample =} \DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_sims.clmm) }\CommentTok{\#create empty dataframe}
+
+\CommentTok{\# Loop to fit a model for each random sample and extract the p{-}value of the Tempo contrasts}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_sims.clmm)\{}
+\NormalTok{  samp }\OtherTok{\textless{}{-}}\NormalTok{ samples.clmm.long }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(sample.clmm }\SpecialCharTok{==}\NormalTok{ i)}
+  \FunctionTok{tryCatch}\NormalTok{(mod }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Arousal.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo  }\SpecialCharTok{*}\NormalTok{Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+} 
+\NormalTok{                         (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ Tempo }\SpecialCharTok{|}\NormalTok{ Participant), }\AttributeTok{data =}\NormalTok{ samp),}
+           \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) \{}
+             \FunctionTok{message}\NormalTok{(}\StringTok{\textquotesingle{}Error\textquotesingle{}}\NormalTok{)}
+             \FunctionTok{print}\NormalTok{(e)}
+\NormalTok{           \})}
+  \FunctionTok{tryCatch}\NormalTok{(comp }\OtherTok{\textless{}{-}} \FunctionTok{emmeans}\NormalTok{(mod, pairwise}\SpecialCharTok{\textasciitilde{}}\NormalTok{Tempo),}
+           \AttributeTok{error =} \ControlFlowTok{function}\NormalTok{(e) e, }\ConstantTok{NULL}\NormalTok{)}
+\NormalTok{  clmm.comps.aro}\SpecialCharTok{$}\NormalTok{p[i] }\OtherTok{\textless{}{-}} \FunctionTok{round}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(comp}\SpecialCharTok{$}\NormalTok{contrast)}\SpecialCharTok{$}\NormalTok{p.value, }\DecValTok{3}\NormalTok{)}
+\NormalTok{  clmm.comps.aro}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}}\NormalTok{[i] }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(clmm.comps.aro}\SpecialCharTok{$}\NormalTok{p[i] }\SpecialCharTok{\textless{}=}\NormalTok{ alpha.clmm, }
+                                                       \StringTok{"Significant"}\NormalTok{, }\StringTok{"Non{-}significant"}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+## <simpleError in `contrasts<-`(`*tmp*`, value = contr.funs[1 + isOF[nn]]): contrasts can be applied only to factors with 2 or more levels>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Calculate power (proportion of simulations in which the Tempo contrast was significant)}
+\NormalTok{power.clmm.aro }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(clmm.comps.aro}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}} \SpecialCharTok{==} \StringTok{"Significant"}\NormalTok{)}\SpecialCharTok{/}\NormalTok{num\_sims.clmm}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{achieved-power}{%
+\subsection{Achieved power}\label{achieved-power}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p5a }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(clmm.comps.den, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ p, }\AttributeTok{fill =} \StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{1}\SpecialCharTok{/}\NormalTok{alpha.clmm, }\AttributeTok{breaks =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, alpha.clmm)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y =} \StringTok{"Count"}\NormalTok{, }\AttributeTok{x =} \StringTok{"p{-}value"}\NormalTok{, }\AttributeTok{title =} \StringTok{"Density"}\NormalTok{,}
+       \AttributeTok{subtitle =} \StringTok{"Call: clmm(Density.tempo \textasciitilde{} Tempo  *Solo.group * Participant.country * Music.country +}
+\StringTok{       (1 + Tempo | Participant))"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{, }\AttributeTok{x =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{y =} \FunctionTok{sum}\NormalTok{(clmm.comps.den}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}} \SpecialCharTok{==} \StringTok{"Significant"}\NormalTok{) }\SpecialCharTok{*} \FloatTok{0.9}\NormalTok{,}
+           \AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Power = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(power.clmm.den, }\DecValTok{3}\NormalTok{),}
+                          \StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Sample size = "}\NormalTok{, sample\_size.clmm,}
+                          \StringTok{" participants per country}\SpecialCharTok{\textbackslash{}n}\StringTok{(6 paired responses per participant)"}\NormalTok{))}
+
+\NormalTok{p5b }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(clmm.comps.aro, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ p, }\AttributeTok{fill =} \StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_hue}\NormalTok{(}\AttributeTok{direction =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{1}\SpecialCharTok{/}\NormalTok{alpha.clmm, }\AttributeTok{breaks =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, alpha.clmm)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{y =} \StringTok{"Count"}\NormalTok{, }\AttributeTok{x =} \StringTok{"p{-}value"}\NormalTok{, }\AttributeTok{title =} \StringTok{"Arousal"}\NormalTok{,}
+       \AttributeTok{subtitle =} \StringTok{"Call: clmm(Arousal.tempo \textasciitilde{} Tempo  *Solo.group * Participant.country * Music.country +}
+\StringTok{       (1 + Tempo | Participant))"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{annotate}\NormalTok{(}\StringTok{"text"}\NormalTok{, }\AttributeTok{x =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{y =} \FunctionTok{sum}\NormalTok{(clmm.comps.aro}\SpecialCharTok{$}\StringTok{\textasciigrave{}}\AttributeTok{Statistical signicance}\StringTok{\textasciigrave{}} \SpecialCharTok{==} \StringTok{"Significant"}\NormalTok{) }\SpecialCharTok{*} \FloatTok{0.9}\NormalTok{, }
+           \AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Power = "}\NormalTok{, }\FunctionTok{round}\NormalTok{(power.clmm.aro, }\DecValTok{3}\NormalTok{), }
+                          \StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Sample size = "}\NormalTok{, sample\_size.clmm, }
+                          \StringTok{" participants per country}\SpecialCharTok{\textbackslash{}n}\StringTok{(6 paired responses per participant)"}\NormalTok{))}
+
+\NormalTok{p5 }\OtherTok{\textless{}{-}} \FunctionTok{ggarrange}\NormalTok{(p5a, p5b,}
+                \AttributeTok{common.legend =} \ConstantTok{TRUE}\NormalTok{,}
+                \AttributeTok{legend =} \StringTok{"bottom"}\NormalTok{)}
+\NormalTok{p5}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\hypertarget{analysis-script}{%
+\section{Analysis script}\label{analysis-script}}
+
+Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is to make sure that the data structure is adequate to fit the modle, and to plan in advance all the code.
+
+because only the effect of Tempo was predicted \emph{a-priori}, all other effects are completely random. plan all analyses that will be performed.
+
+\hypertarget{session}{%
+\section{Session info (for reproducibility)}\label{session}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(pander)}
+\FunctionTok{pander}\NormalTok{(}\FunctionTok{sessionInfo}\NormalTok{(), }\AttributeTok{locale =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{R version 4.3.1 (2023-06-16 ucrt)}
+
+\textbf{Platform:} x86\_64-w64-mingw32/x64 (64-bit)
+
+\textbf{attached base packages:}
+\emph{stats}, \emph{graphics}, \emph{grDevices}, \emph{utils}, \emph{datasets}, \emph{methods} and \emph{base}
+
+\textbf{other attached packages:}
+\emph{pander(v.0.6.5)}, \emph{ordinal(v.2022.11-16)}, \emph{emmeans(v.1.8.6)}, \emph{pwr(v.1.3-0)}, \emph{effectsize(v.0.8.3)}, \emph{ggpubr(v.0.6.0)}, \emph{lubridate(v.1.9.2)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.0)}, \emph{dplyr(v.1.1.2)}, \emph{purrr(v.1.0.1)}, \emph{readr(v.2.1.4)}, \emph{tidyr(v.1.3.0)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.4.2)}, \emph{tidyverse(v.2.0.0)} and \emph{knitr(v.1.43)}
+
+\textbf{loaded via a namespace (and not attached):}
+\emph{gtable(v.0.3.3)}, \emph{xfun(v.0.39)}, \emph{bayestestR(v.0.13.1)}, \emph{insight(v.0.19.2)}, \emph{rstatix(v.0.7.2)}, \emph{lattice(v.0.21-8)}, \emph{tzdb(v.0.4.0)}, \emph{numDeriv(v.2016.8-1.1)}, \emph{vctrs(v.0.6.3)}, \emph{tools(v.4.3.1)}, \emph{generics(v.0.1.3)}, \emph{datawizard(v.0.8.0)}, \emph{fansi(v.1.0.4)}, \emph{highr(v.0.10)}, \emph{ucminf(v.1.2.0)}, \emph{pkgconfig(v.2.0.3)}, \emph{Matrix(v.1.5-4.1)}, \emph{lifecycle(v.1.0.3)}, \emph{farver(v.2.1.1)}, \emph{compiler(v.4.3.1)}, \emph{tinytex(v.0.45)}, \emph{munsell(v.0.5.0)}, \emph{codetools(v.0.2-19)}, \emph{carData(v.3.0-5)}, \emph{htmltools(v.0.5.5)}, \emph{yaml(v.2.3.7)}, \emph{pillar(v.1.9.0)}, \emph{car(v.3.1-2)}, \emph{MASS(v.7.3-60)}, \emph{abind(v.1.4-5)}, \emph{nlme(v.3.1-162)}, \emph{tidyselect(v.1.2.0)}, \emph{digest(v.0.6.31)}, \emph{mvtnorm(v.1.2-2)}, \emph{stringi(v.1.7.12)}, \emph{bookdown(v.0.34)}, \emph{labeling(v.0.4.2)}, \emph{cowplot(v.1.1.1)}, \emph{fastmap(v.1.1.1)}, \emph{grid(v.4.3.1)}, \emph{colorspace(v.2.1-0)}, \emph{cli(v.3.6.1)}, \emph{beepr(v.1.3)}, \emph{magrittr(v.2.0.3)}, \emph{utf8(v.1.2.3)}, \emph{broom(v.1.0.5)}, \emph{withr(v.2.5.0)}, \emph{scales(v.1.2.1)}, \emph{backports(v.1.4.1)}, \emph{timechange(v.0.2.0)}, \emph{estimability(v.1.4.1)}, \emph{rmarkdown(v.2.22)}, \emph{audio(v.0.1-10)}, \emph{gridExtra(v.2.3)}, \emph{ggsignif(v.0.6.4)}, \emph{hms(v.1.1.3)}, \emph{evaluate(v.0.21)}, \emph{parameters(v.0.21.1)}, \emph{rlang(v.1.1.1)}, \emph{Rcpp(v.1.0.10)}, \emph{xtable(v.1.8-4)}, \emph{glue(v.1.6.2)}, \emph{rstudioapi(v.0.14)} and \emph{R6(v.2.5.1)}
+
+\hypertarget{refs}{%
+\section*{Supplementary references}\label{refs}}
+\addcontentsline{toc}{section}{Supplementary references}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-albersWhenPowerAnalyses2018}{}}%
+Albers, C., \& Lakens, D. (2018). When power analyses based on pilot data are biased: {Inaccurate} effect size estimators and follow-up bias. \emph{Journal of Experimental Social Psychology}, \emph{74}, 187--195. \url{https://doi.org/10.1016/j.jesp.2017.09.004}
+
+\leavevmode\vadjust pre{\hypertarget{ref-bordersPowerAnalysisOrdinal2022}{}}%
+Borders, J. C., Grande, A. A., \& Troche, M. S. (2022). \emph{Power {Analysis} with {Ordinal Outcomes}: {A Tutorial}}. \url{https://osf.io/8sc5e}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ordinalcit}{}}%
+Christensen, R. H. B. (2022). \emph{Ordinal---regression models for ordinal data}. \url{https://CRAN.R-project.org/package=ordinal}
+
+\leavevmode\vadjust pre{\hypertarget{ref-emmeanscit}{}}%
+Lenth, R. V. (2022). \emph{Emmeans: Estimated marginal means, aka least-squares means}. \url{https://CRAN.R-project.org/package=emmeans}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ggplotcit}{}}%
+Wickham, H. (2016). \emph{ggplot2: Elegant graphics for data analysis}. Springer-Verlag New York. \url{https://ggplot2.tidyverse.org}
+
+\leavevmode\vadjust pre{\hypertarget{ref-tidyversecit}{}}%
+Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J., Robinson, D., Seidel, D. P., Spinu, V., \ldots{} Yutani, H. (2019). Welcome to the {tidyverse}. \emph{Journal of Open Source Software}, \emph{4}(43), 1686. \url{https://doi.org/10.21105/joss.01686}
+
+\leavevmode\vadjust pre{\hypertarget{ref-dplyrcit}{}}%
+Wickham, H., François, R., Henry, L., \& Müller, K. (2022). \emph{Dplyr: A grammar of data manipulation}. \url{https://CRAN.R-project.org/package=dplyr}
+
+\leavevmode\vadjust pre{\hypertarget{ref-knitrcit}{}}%
+Xie, Y. (2014). Knitr: A comprehensive tool for reproducible research in {R}. In V. Stodden, F. Leisch, \& R. D. Peng (Eds.), \emph{Implementing reproducible computational research}. {Chapman and Hall/CRC}. \url{https://doi.org/10.1201/9781315373461-1}
+
+\end{CSLReferences}
+
+\end{document}
