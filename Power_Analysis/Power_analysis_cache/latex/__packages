@@ -10,7 +10,5 @@ stringr
 forcats
 lubridate
 ggpubr
-effectsize
-pwr
 emmeans
 ordinal

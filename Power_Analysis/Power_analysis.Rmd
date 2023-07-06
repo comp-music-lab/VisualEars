@@ -527,7 +527,7 @@ Using the final, simulated population (*N* = 10000 participants, with 6 paired o
 num_sims.clmm = 100 
 
 # Sample size for each simulation (number of participants per country)
-sample_size.clmm = 24 
+sample_size.clmm = 25 
 
 # Significance level
 alpha.clmm = 0.05 
@@ -664,7 +664,7 @@ ex.data <- samples.clmm.long %>%
 
 Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
 
-```{r eval = FALSE, cache = TRUE, fig.cap = "Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed lines represent the within-subject effect of the Tempo manipulation."}
+```{r cache = TRUE, fig.cap = "Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed lines represent the within-subject effect of the Tempo manipulation."}
 p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, color = Participant.country, shape = Music.country)) +
   geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
   geom_point(position = position_dodge(0.3), size = 3) +
