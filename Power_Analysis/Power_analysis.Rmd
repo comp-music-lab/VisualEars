@@ -70,7 +70,7 @@ header-includes:
     skip=5pt}
 always_allow_html: yes
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
-bibliography: bib/Bibliography.bib
+bibliography: Bib/Bibliography.bib
 urlcolor: blue
 linkcolor: gray
 link-citations: true
@@ -132,9 +132,9 @@ set.seed(1)
 
 ## Load packages
 
-This file was created using `knitr` [@knitrcit], mostly using `tidyverse` [@tidyversecit] syntax. As such, data wrangling was mainly done using packages such as `dplyr` [@dplyrcit], and most figures were created using `ggplot2` [@ggplotcit].
+This file was created using `knitr` [@knitrcit], mostly using `tidyverse` [@tidyversecit] syntax. As such, data wrangling was mainly done using packages such as `dplyr` [@dplyrcit], and most figures were created using `ggplot2` [@ggplotcit]. Tables were created using `knitr::kable` and `kableExtra` [@kableExtracit].
 
-Cumulative Link Mixed Models (CLMM) were fitted using `ordinal` [@ordinalcit], and contrasts and interactions were explored using `emmeans` [@emmeanscit].
+Cumulative Link Mixed Models (CLMM) were fitted using `ordinal` [@ordinalcit], and contrasts and interactions were explored using `emmeans` [@emmeanscit]. In all cases, threshold between levels of the dependent (ordinal) variable, were set as flexible.
 
 All packages used in this file can be directly installed from the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)). For a complete list of packages used to create this file, and their versions, see section \@ref(session), at the end of the document.
 
@@ -143,15 +143,145 @@ library(tidyverse)
 library(ggpubr)
 library(emmeans)
 library(ordinal)
+library(kableExtra)
+library(performance)
 ```
 
 ## Custom functions
 
-To simulate ordinal data with a specific distribution, we used the function `clmm_generate_data`, created by @bordersPowerAnalysisOrdinal2022 as part of their tutorial (https://osf.io/e6usd/). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the `clmm-power-library.R` file (https://osf.io/tjpkf). Here, it is run from source, but in a version oif the file changing the `mc.cores` parameter to 1, to avoid errors.
+### `clmm_generate_data`
+
+To simulate ordinal data with a specific distribution, we used the function `clmm_generate_data`, created by @bordersPowerAnalysisOrdinal2022 as part of their tutorial (https://osf.io/e6usd/). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the `clmm-power-library.R` file (https://osf.io/tjpkf). Here, it is run from source, but in a slightly modified version of the file in which we changed the `mc.cores` parameter to 1, to avoid errors.
 
 ```{r}
 source("clmm-power-library.R", local = knitr::knit_global())
 ```
+
+### `pval.lev`
+
+The function `pval.lev` takes p-values and formats them in \LaTeX, highlighting significant results in bold.
+
+```{r}
+pval.lev <- function(pvals) {
+  ifelse(pvals < 0.0001,
+         "\\textbf{< 0.0001}",
+         ifelse(pvals < 0.001,
+                "\\textbf{< 0.001}",
+                ifelse(pvals < 0.05,
+                       paste0("\\textbf{", round(pvals, 4), "}"),
+                       round(pvals, 2))))
+}
+```
+
+### `summary.sig`
+
+The function `summary.sig` was created to bold significant *p* values from summary model tables. It highlights significant $p$ values, and formats the output in \LaTeX, ready to be used with `kable`.
+
+```{r}
+summary.sig <- function(mod, custom_caption) {
+  modTab <- data.frame(summary(mod)$coefficients) |>
+    rownames_to_column() |>
+    mutate_at("rowname", str_replace_all, ":", " × ") |>
+    mutate_at("rowname", str_replace_all, "`", "") |>
+    mutate("rowname" = str_replace_all(rowname,
+                                       c("Tempo1" = "Tempo [Low]",
+                                         "Solo.group1" = "Instrumentation [Group]",
+                                         "Participant.country1" = "Participant country [Canada]",
+                                         "Participant.country2" = "Participant country [Iran]",
+                                         "Music.country1" = "Music country [Canada]",
+                                         "Music.country2" = "Music country [Iran]"))) |> 
+      mutate(Pr...z.. = pval.lev(Pr...z..)) |> 
+      kable(digits = 2,
+            booktabs = TRUE,
+            align = c("l", rep("c", 4)),
+            linesep = "",
+            caption = custom_caption,
+            col.names = c("Effects",
+                          "Estimate", 
+                          "Std. Error", 
+                          "$z$", 
+                          "$p$"),
+            escape = FALSE) |> 
+    kable_styling(latex_options = c("HOLD_position", "scale_down")) |>
+    pack_rows(group_label = "Thresholds",
+              start_row = 1,
+              end_row = 4,
+              hline_after = TRUE,
+              bold = TRUE) |>
+    pack_rows(group_label = "Terms",
+              start_row = 5,
+              end_row = 39,
+              hline_before = TRUE,
+              hline_after = TRUE,
+              bold = TRUE)
+  return(modTab)
+}
+```
+
+### `contr.stars`
+
+Function to create a data frame of model contrasts, representing significance levels from an `emmeans::emmeans` output. These data frames are formatted to be called by the `ggpubr::stat_pvalue_manual` function used in model figures.
+
+```{r results = "hold"}
+contr.stars <- function(emms){
+  require(emmeans)
+  x <- tibble(as.data.frame(emms$contrasts))
+  x <- separate(x,
+                col = 1, 
+                into = c("group1", "group2"), 
+                sep = " - ", 
+                remove = TRUE)
+  x$p.signif <- ifelse(x$p.value < 0.0001, "****",
+                            ifelse(x$p.value < 0.001, "***",
+                                   ifelse(x$p.value < 0.01, "**",
+                                          ifelse(x$p.value < 0.05, "*", NA))))
+  x <- x |>
+    mutate_at("group1", str_replace_all, "[()]", "") |> 
+    mutate_at("group2", str_replace_all, "[()]", "")
+  return(x)
+}
+```
+
+### `tempo.contr`
+
+This functions creates a table combining both estimated marginal means and contrasts between levels of Tempo, and formats the output in \LaTeX, ready to be used with `kable`. 
+
+```{r}
+tempo.contr <- function(mod){
+  emms.mod <- emmeans(mod, pairwise~Tempo)
+  emms.mod.tab <- tibble(data.frame(emms.mod$emmeans))
+  t.mod <- contr.stars(emms.mod) |>
+    mutate(p.value = pval.lev(p.value))
+  emm.contr.tab <- merge(emms.mod.tab, t.mod, by = 0, all = TRUE) |>
+    select(-c(1,5,12,15)) |>
+    unite(Contrast, group1, group2, sep = " - ") |>
+    mutate_at("Contrast", str_replace_all, "NA - NA", " ") |>
+    kable(digits = 2,
+          booktabs = TRUE,
+          align = c("l", rep("c", 5), "l", rep("c", 5)),
+          linesep = "",
+          caption = "Estimated marginal means and contrasts between Tempo conditions",
+          col.names = c("Tempo",
+                        "EMM",
+                        "$SE$",
+                        "$2.5\\% CI$",
+                        "$97.5\\% CI$",
+                        "Contrast",
+                        "Difference",
+                        "$SE$",
+                        "$z$",
+                        "$p$"),
+          escape = FALSE) |>
+    add_header_above(c(" " = 5, "Contrasts" = 5)) |>
+    kable_styling(latex_options = c("HOLD_position")) |>
+    footnote(general = "EMM = estimated marginal mean.",
+             threeparttable = TRUE,
+             footnote_as_chunk = TRUE,
+             escape = FALSE)
+  return(emm.contr.tab)
+}
+```
+
 
 # Data
 
@@ -358,7 +488,7 @@ While the data simulated in the previous section resembled the distribution of t
 
 First, the effects of Tempo were extremely large (3.2, 1.2, 3.1, 1.6), particularly for ratings of Group instrumentation (3.2, and 3.1). With such differences, a very high statistical power of about $1 - \beta = 0.95$  can be achieved with 2 or 3 participants. And second, as mentioned before, estimating effects from pilot data is problematic, as it biases the results [@albersWhenPowerAnalyses2018]. 
 
-For this reason, we decided to maintain the distributions of probabilities for the first Tempo level (Low), as it is a goiod starting point to estimate the distribution of ratings that participants would assign, but simulated the second level (Tempo = High) with a much more conservative effect of 1 in all cases. 
+For this reason, we decided to maintain the distributions of probabilities for the first Tempo level (Low), as it is a good starting point to estimate the distribution of ratings that participants would assign, but simulated the second level (Tempo = High) with a much more conservative effect of 1 in all cases. 
 
 ```{r cache = TRUE}
 # Density ratings for group music
@@ -535,11 +665,11 @@ alpha.clmm = 0.05
 
 Then, models were fitted from the defined `r num_sims.clmm` random samples extracted from the simulated population. 
 
-From each sample, two Cumulative Link Mixed Models (CLMM) were fitted: one for Density ratings, and one for arousal ratings. All models were fitted with the following call: `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. 
+From each sample, two Cumulative Link Mixed Models (CLMM) were fitted [see e.g., @taylorRatingNormsShould2022]: one for Density ratings, and one for arousal ratings. All models were fitted with the following call: `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. 
 
-This is, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant.
+This is, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. 
 
-For each random sample, we adjusted the number of participants per country (in this case, *n* = `r sample_size.clmm`) to achieve the target statistical power of at least $1 - \beta = 0.95$ for both the Density and Arousal models.
+For each random sample, we adjusted the number of participants per country (in this case, *n* = `r sample_size.clmm`) to achieve the target statistical power of at least $1 - \beta = 0.95$ for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of Instrumentation (`Solo.group`), participant country (`Participant.country`) and Music country (`Music.country`).
 
 ## Select random samples
 
@@ -564,7 +694,7 @@ samples.clmm.long <- left_join(samples.clmm, dat.sim, by = c("Participant",
   mutate(Tempo = as.factor(Tempo))
 ```
 
-## Density power analysis
+## Visual density power analysis
 
 ```{r power-density, cache = TRUE, warning = FALSE, message = FALSE, error = FALSE}
 # Create empty data frame
@@ -652,11 +782,11 @@ p5 <- ggarrange(p5a, p5b,
 p5
 ```
 
-# Analysis script
+# Analysis script with example data
 
 Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
 
-```{r cache = TRUE}
+```{r}
 # Select a random sample
 ex.data <- samples.clmm.long %>%
   filter(sample.clmm == sample(1:num_sims.clmm, 1, replace = TRUE))
@@ -664,7 +794,7 @@ ex.data <- samples.clmm.long %>%
 
 Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
 
-```{r fig.cap="Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.", message = FALSE, warning = FALSE, cache=TRUE}
+```{r fig.cap="Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.", message = FALSE, warning = FALSE}
 p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, color = Participant.country, shape = Music.country)) +
   geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
   geom_point(position = position_dodge(0.3), size = 3) +
@@ -693,19 +823,46 @@ p6 <- ggarrange(p6a, p6b,
 p6
 ```
 
-We fitted the model with the same structure: `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. Estimated marginal means and confidence intervals for this simulation are represented in \@ref(fig:mod-ex).
+We fitted the models with the same structure: `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. To obtain *p*-values that represent main effects and interactions in an ANOVA-type manner (i.e. the intercept is the grand mean of all cells, and estimates are differences between each category mean and the mean of all categories), we used *sum-to-zero* contrasts[^1] [see e.g., @kaufmanContrastCodingLeast1974; @keppelDataAnalysisResearch1989].
 
-```{r mod-ex, warning = FALSE, cache = TRUE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo from a ramdomly selected, simulated sample. Columns represent data from simulated participants from each country, while rows represent the simulated response to music from each country."}
-# Density model
-model.den <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + (1 | Participant), 
-              data = ex.data,
-              contrasts = TRUE)
+[^1]: We did not do this for the models fitted for the power analysis, as it would not change the contrasts between Tempo conditions, but it is useful to display the full model results as we used `summary` (regression-type tables of estimates) instead on ANOVA-type tables (which are not available for models of `clmm` class).
 
-# Arousal model
-model.aro <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + (1 | Participant), 
-              data = ex.data,
-              contrasts = TRUE)
+In all cases, results are for main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. *High* was used as reference category for Tempo, and *Japan* for both participant and music country. Contrasted levels are in square brackets.
+Significant effects are in bold.")
 
+As pointed out by @532079, it is crucial to consider that ordinal models rely on estimates of a dependent variable (*y*) following a logistic distribution. However, *y* itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, *y* is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
+
+## Visual density example model
+
+```{r mod-ex-den, warning = FALSE}
+# Fit Density model
+options(contrasts = c("contr.sum","contr.poly"))
+model.den <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
+                    (1 | Participant),
+                  data = ex.data)
+
+# Summary table
+summary.sig(model.den, "Visual density ratings model summary")
+```
+
+## Arousal example model
+
+```{r mod-ex-aro, warning = FALSE}
+# Fit Arousal model
+options(contrasts = c("contr.sum","contr.poly"))
+model.aro <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
+                    (1 | Participant),
+                  data = ex.data)
+
+# Summary table
+summary.sig(model.aro, "Arousal ratings model summary")
+```
+
+## Estimated marginal means and confidence intervals for both models
+
+Estimated marginal means and confidence intervals for this simulation are represented in \@ref(fig:plot-mod-ex).
+
+```{r plot-mod-ex, warning = FALSE, cache = TRUE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo from a ramdomly selected, simulated sample. Columns represent data from simulated participants from each country, while rows represent the simulated response to music from each country."}
 p7a <- emmip(model.den, Solo.group ~ Tempo | Participant.country + Music.country,
       CIs = TRUE) +
   labs(title = "Density")
@@ -720,8 +877,43 @@ p7 <- ggarrange(p7a, p7b,
 p7
 ```
 
+## Effect of Tempo
+
+Estimated marginal mean and contrast between the levels of Tempo (Low, High) averaged over the levels of Instrumentation (`Solo.group`), participant country (`Participant.country`) and Music country (`Music.country`). To obtain the estimated distributions of the ordinal levels of the dependent variable, the argument `mode = "mean.class"` can be added to the `emmeans` function [see @532079].
+
+### Visual density model
+
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the `emmeans` function from the `emmeans` package [@emmeanscit].
+
+```{r tab-den-emms, message = FALSE}
+tempo.contr(model.den)
+```
+
+Figure of estimated marginal means and contrasts between tempo conditions.
+
+```{r, message = FALSE}
+emmip(model.den, ~Tempo, CIs = TRUE)
+```
+
+### Arousal model
+
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the `emmeans` function from the `emmeans` package [@emmeanscit].
+
+```{r tab-aro-emms, message = FALSE}
+tempo.contr(model.aro)
+```
+
+Figure of estimated marginal means and contrasts between tempo conditions.
+
+```{r, message = FALSE}
+emmip(model.aro, ~Tempo, CIs = TRUE)
+```
+
 ```{r echo = FALSE}
-beepr::beep(sound = 8)
+# This is to play a sound when all code finishes running (as it takes several hours). 
+# Not printed in output
+library(beepr)
+beep(sound = 3)
 ```
 
 # Session info (for reproducibility) {#session}

@@ -129,6 +129,20 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 \usepackage{caption} \usepackage{float} \floatplacement{figure}{H} \usepackage[utf8]{inputenc} \usepackage{fancyhdr} \pagestyle{fancy} \usepackage{hanging} \lhead{Hadavi et al.} \rhead{\textit{Power analysis}} \renewcommand{\abstractname}{Description} \usepackage{orcidlink} \newcommand{\opensupplement}{\setcounter{table}{0} \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}} \newcommand{\closesupplement}{\setcounter{table}{0} \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{\arabic{figure}}} \usepackage{multirow,booktabs,setspace} \DeclareCaptionLabelSeparator{point}{. } \DeclareCaptionLabelSeparator{point}{. } \captionsetup[table]{labelfont=bf, textfont=it, format=plain, labelsep=point, skip=5pt} \captionsetup[figure]{labelfont=bf, format=plain, justification=justified, singlelinecheck=false, labelsep=point, skip=5pt}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
@@ -154,7 +168,7 @@
 \makeatother
 \subtitle{Code and analyses: Simulation-based power analysis}
 \author{Shafagh Hadavi \orcidlink{0009-0008-1184-7238}\textsuperscript{1} \and Junji Kuroda\textsuperscript{2} \and Taiki Shimozono\textsuperscript{2} \and Juan David Leongómez \orcidlink{0000-0002-0092-6298}\textsuperscript{3} \and Patrick E. Savage \orcidlink{0000-0001-6996-7496}\textsuperscript{1}}
-\date{05 July, 2023}
+\date{06 July, 2023}
 
 \begin{document}
 \maketitle
@@ -205,9 +219,9 @@ Data available from the Open Science Framework (OSF): \url{https://doi.org/10.XX
 \hypertarget{load-packages}{%
 \subsection{Load packages}\label{load-packages}}
 
-This file was created using \texttt{knitr} (\protect\hyperlink{ref-knitrcit}{Xie, 2014}), mostly using \texttt{tidyverse} (\protect\hyperlink{ref-tidyversecit}{Wickham et al., 2019}) syntax. As such, data wrangling was mainly done using packages such as \texttt{dplyr} (\protect\hyperlink{ref-dplyrcit}{Wickham et al., 2022}), and most figures were created using \texttt{ggplot2} (\protect\hyperlink{ref-ggplotcit}{Wickham, 2016}).
+This file was created using \texttt{knitr} (\protect\hyperlink{ref-knitrcit}{Xie, 2014}), mostly using \texttt{tidyverse} (\protect\hyperlink{ref-tidyversecit}{Wickham et al., 2019}) syntax. As such, data wrangling was mainly done using packages such as \texttt{dplyr} (\protect\hyperlink{ref-dplyrcit}{Wickham et al., 2022}), and most figures were created using \texttt{ggplot2} (\protect\hyperlink{ref-ggplotcit}{Wickham, 2016}). Tables were created using \texttt{knitr::kable} and \texttt{kableExtra} (\protect\hyperlink{ref-kableExtracit}{Zhu, 2020}).
 
-Cumulative Link Mixed Models (CLMM) were fitted using \texttt{ordinal} (\protect\hyperlink{ref-ordinalcit}{Christensen, 2022}), and contrasts and interactions were explored using \texttt{emmeans} (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}).
+Cumulative Link Mixed Models (CLMM) were fitted using \texttt{ordinal} (\protect\hyperlink{ref-ordinalcit}{Christensen, 2022}), and contrasts and interactions were explored using \texttt{emmeans} (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}). In all cases, threshold between levels of the dependent (ordinal) variable, were set as flexible.
 
 All packages used in this file can be directly installed from the Comprehensive R Archive Network (\href{https://cran.r-project.org/}{CRAN}). For a complete list of packages used to create this file, and their versions, see section \ref{session}, at the end of the document.
 
@@ -217,17 +231,159 @@ All packages used in this file can be directly installed from the Comprehensive 
 \FunctionTok{library}\NormalTok{(ggpubr)}
 \FunctionTok{library}\NormalTok{(emmeans)}
 \FunctionTok{library}\NormalTok{(ordinal)}
+\FunctionTok{library}\NormalTok{(kableExtra)}
+\FunctionTok{library}\NormalTok{(performance)}
 \end{Highlighting}
 \end{Shaded}
 
 \hypertarget{custom-functions}{%
 \subsection{Custom functions}\label{custom-functions}}
 
-To simulate ordinal data with a specific distribution, we used the function \texttt{clmm\_generate\_data}, created by Borders et al. (\protect\hyperlink{ref-bordersPowerAnalysisOrdinal2022}{2022}) as part of their tutorial (\url{https://osf.io/e6usd/}). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the \texttt{clmm-power-library.R} file (\url{https://osf.io/tjpkf}). Here, it is run from source, but in a version oif the file changing the \texttt{mc.cores} parameter to 1, to avoid errors.
+\hypertarget{clmm_generate_data}{%
+\subsubsection{\texorpdfstring{\texttt{clmm\_generate\_data}}{clmm\_generate\_data}}\label{clmm_generate_data}}
+
+To simulate ordinal data with a specific distribution, we used the function \texttt{clmm\_generate\_data}, created by Borders et al. (\protect\hyperlink{ref-bordersPowerAnalysisOrdinal2022}{2022}) as part of their tutorial (\url{https://osf.io/e6usd/}). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the \texttt{clmm-power-library.R} file (\url{https://osf.io/tjpkf}). Here, it is run from source, but in a slightly modified version of the file in which we changed the \texttt{mc.cores} parameter to 1, to avoid errors.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \FunctionTok{source}\NormalTok{(}\StringTok{"clmm{-}power{-}library.R"}\NormalTok{, }\AttributeTok{local =}\NormalTok{ knitr}\SpecialCharTok{::}\FunctionTok{knit\_global}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{pval.lev}{%
+\subsubsection{\texorpdfstring{\texttt{pval.lev}}{pval.lev}}\label{pval.lev}}
+
+The function \texttt{pval.lev} takes p-values and formats them in \LaTeX, highlighting significant results in bold.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pval.lev }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(pvals) \{}
+  \FunctionTok{ifelse}\NormalTok{(pvals }\SpecialCharTok{\textless{}} \FloatTok{0.0001}\NormalTok{,}
+         \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textbf\{\textless{} 0.0001\}"}\NormalTok{,}
+         \FunctionTok{ifelse}\NormalTok{(pvals }\SpecialCharTok{\textless{}} \FloatTok{0.001}\NormalTok{,}
+                \StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textbf\{\textless{} 0.001\}"}\NormalTok{,}
+                \FunctionTok{ifelse}\NormalTok{(pvals }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{,}
+                       \FunctionTok{paste0}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{textbf\{"}\NormalTok{, }\FunctionTok{round}\NormalTok{(pvals, }\DecValTok{4}\NormalTok{), }\StringTok{"\}"}\NormalTok{),}
+                       \FunctionTok{round}\NormalTok{(pvals, }\DecValTok{2}\NormalTok{))))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{summary.sig}{%
+\subsubsection{\texorpdfstring{\texttt{summary.sig}}{summary.sig}}\label{summary.sig}}
+
+The function \texttt{summary.sig} was created to bold significant \emph{p} values from summary model tables. It highlights significant \(p\) values, and formats the output in \LaTeX, ready to be used with \texttt{kable}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{summary.sig }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(mod, custom\_caption) \{}
+\NormalTok{  modTab }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\FunctionTok{summary}\NormalTok{(mod)}\SpecialCharTok{$}\NormalTok{coefficients) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{rownames\_to\_column}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate\_at}\NormalTok{(}\StringTok{"rowname"}\NormalTok{, str\_replace\_all, }\StringTok{":"}\NormalTok{, }\StringTok{" × "}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate\_at}\NormalTok{(}\StringTok{"rowname"}\NormalTok{, str\_replace\_all, }\StringTok{"\textasciigrave{}"}\NormalTok{, }\StringTok{""}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate}\NormalTok{(}\StringTok{"rowname"} \OtherTok{=} \FunctionTok{str\_replace\_all}\NormalTok{(rowname,}
+                                       \FunctionTok{c}\NormalTok{(}\StringTok{"Tempo1"} \OtherTok{=} \StringTok{"Tempo [Low]"}\NormalTok{,}
+                                         \StringTok{"Solo.group1"} \OtherTok{=} \StringTok{"Instrumentation [Group]"}\NormalTok{,}
+                                         \StringTok{"Participant.country1"} \OtherTok{=} \StringTok{"Participant country [Canada]"}\NormalTok{,}
+                                         \StringTok{"Participant.country2"} \OtherTok{=} \StringTok{"Participant country [Iran]"}\NormalTok{,}
+                                         \StringTok{"Music.country1"} \OtherTok{=} \StringTok{"Music country [Canada]"}\NormalTok{,}
+                                         \StringTok{"Music.country2"} \OtherTok{=} \StringTok{"Music country [Iran]"}\NormalTok{))) }\SpecialCharTok{|\textgreater{}} 
+      \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Pr...z.. =} \FunctionTok{pval.lev}\NormalTok{(Pr...z..)) }\SpecialCharTok{|\textgreater{}} 
+      \FunctionTok{kable}\NormalTok{(}\AttributeTok{digits =} \DecValTok{2}\NormalTok{,}
+            \AttributeTok{booktabs =} \ConstantTok{TRUE}\NormalTok{,}
+            \AttributeTok{align =} \FunctionTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\DecValTok{4}\NormalTok{)),}
+            \AttributeTok{linesep =} \StringTok{""}\NormalTok{,}
+            \AttributeTok{caption =}\NormalTok{ custom\_caption,}
+            \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Effects"}\NormalTok{,}
+                          \StringTok{"Estimate"}\NormalTok{, }
+                          \StringTok{"Std. Error"}\NormalTok{, }
+                          \StringTok{"$z$"}\NormalTok{, }
+                          \StringTok{"$p$"}\NormalTok{),}
+            \AttributeTok{escape =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"HOLD\_position"}\NormalTok{, }\StringTok{"scale\_down"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{pack\_rows}\NormalTok{(}\AttributeTok{group\_label =} \StringTok{"Thresholds"}\NormalTok{,}
+              \AttributeTok{start\_row =} \DecValTok{1}\NormalTok{,}
+              \AttributeTok{end\_row =} \DecValTok{4}\NormalTok{,}
+              \AttributeTok{hline\_after =} \ConstantTok{TRUE}\NormalTok{,}
+              \AttributeTok{bold =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{pack\_rows}\NormalTok{(}\AttributeTok{group\_label =} \StringTok{"Terms"}\NormalTok{,}
+              \AttributeTok{start\_row =} \DecValTok{5}\NormalTok{,}
+              \AttributeTok{end\_row =} \DecValTok{39}\NormalTok{,}
+              \AttributeTok{hline\_before =} \ConstantTok{TRUE}\NormalTok{,}
+              \AttributeTok{hline\_after =} \ConstantTok{TRUE}\NormalTok{,}
+              \AttributeTok{bold =} \ConstantTok{TRUE}\NormalTok{)}
+  \FunctionTok{return}\NormalTok{(modTab)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{contr.stars}{%
+\subsubsection{\texorpdfstring{\texttt{contr.stars}}{contr.stars}}\label{contr.stars}}
+
+Function to create a data frame of model contrasts, representing significance levels from an \texttt{emmeans::emmeans} output. These data frames are formatted to be called by the \texttt{ggpubr::stat\_pvalue\_manual} function used in model figures.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{contr.stars }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(emms)\{}
+  \FunctionTok{require}\NormalTok{(emmeans)}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}\FunctionTok{as.data.frame}\NormalTok{(emms}\SpecialCharTok{$}\NormalTok{contrasts))}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \FunctionTok{separate}\NormalTok{(x,}
+                \AttributeTok{col =} \DecValTok{1}\NormalTok{, }
+                \AttributeTok{into =} \FunctionTok{c}\NormalTok{(}\StringTok{"group1"}\NormalTok{, }\StringTok{"group2"}\NormalTok{), }
+                \AttributeTok{sep =} \StringTok{" {-} "}\NormalTok{, }
+                \AttributeTok{remove =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{  x}\SpecialCharTok{$}\NormalTok{p.signif }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(x}\SpecialCharTok{$}\NormalTok{p.value }\SpecialCharTok{\textless{}} \FloatTok{0.0001}\NormalTok{, }\StringTok{"****"}\NormalTok{,}
+                            \FunctionTok{ifelse}\NormalTok{(x}\SpecialCharTok{$}\NormalTok{p.value }\SpecialCharTok{\textless{}} \FloatTok{0.001}\NormalTok{, }\StringTok{"***"}\NormalTok{,}
+                                   \FunctionTok{ifelse}\NormalTok{(x}\SpecialCharTok{$}\NormalTok{p.value }\SpecialCharTok{\textless{}} \FloatTok{0.01}\NormalTok{, }\StringTok{"**"}\NormalTok{,}
+                                          \FunctionTok{ifelse}\NormalTok{(x}\SpecialCharTok{$}\NormalTok{p.value }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\StringTok{"*"}\NormalTok{, }\ConstantTok{NA}\NormalTok{))))}
+\NormalTok{  x }\OtherTok{\textless{}{-}}\NormalTok{ x }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate\_at}\NormalTok{(}\StringTok{"group1"}\NormalTok{, str\_replace\_all, }\StringTok{"[()]"}\NormalTok{, }\StringTok{""}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{mutate\_at}\NormalTok{(}\StringTok{"group2"}\NormalTok{, str\_replace\_all, }\StringTok{"[()]"}\NormalTok{, }\StringTok{""}\NormalTok{)}
+  \FunctionTok{return}\NormalTok{(x)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{tempo.contr}{%
+\subsubsection{\texorpdfstring{\texttt{tempo.contr}}{tempo.contr}}\label{tempo.contr}}
+
+This functions creates a table combining both estimated marginal means and contrasts between levels of Tempo, and formats the output in \LaTeX, ready to be used with \texttt{kable}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tempo.contr }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(mod)\{}
+\NormalTok{  emms.mod }\OtherTok{\textless{}{-}} \FunctionTok{emmeans}\NormalTok{(mod, pairwise}\SpecialCharTok{\textasciitilde{}}\NormalTok{Tempo)}
+\NormalTok{  emms.mod.tab }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(emms.mod}\SpecialCharTok{$}\NormalTok{emmeans))}
+\NormalTok{  t.mod }\OtherTok{\textless{}{-}} \FunctionTok{contr.stars}\NormalTok{(emms.mod) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{p.value =} \FunctionTok{pval.lev}\NormalTok{(p.value))}
+\NormalTok{  emm.contr.tab }\OtherTok{\textless{}{-}} \FunctionTok{merge}\NormalTok{(emms.mod.tab, t.mod, }\AttributeTok{by =} \DecValTok{0}\NormalTok{, }\AttributeTok{all =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{12}\NormalTok{,}\DecValTok{15}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{unite}\NormalTok{(Contrast, group1, group2, }\AttributeTok{sep =} \StringTok{" {-} "}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate\_at}\NormalTok{(}\StringTok{"Contrast"}\NormalTok{, str\_replace\_all, }\StringTok{"NA {-} NA"}\NormalTok{, }\StringTok{" "}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{kable}\NormalTok{(}\AttributeTok{digits =} \DecValTok{2}\NormalTok{,}
+          \AttributeTok{booktabs =} \ConstantTok{TRUE}\NormalTok{,}
+          \AttributeTok{align =} \FunctionTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\DecValTok{5}\NormalTok{), }\StringTok{"l"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\DecValTok{5}\NormalTok{)),}
+          \AttributeTok{linesep =} \StringTok{""}\NormalTok{,}
+          \AttributeTok{caption =} \StringTok{"Estimated marginal means and contrasts between Tempo conditions"}\NormalTok{,}
+          \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Tempo"}\NormalTok{,}
+                        \StringTok{"EMM"}\NormalTok{,}
+                        \StringTok{"$SE$"}\NormalTok{,}
+                        \StringTok{"$2.5}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{\% CI$"}\NormalTok{,}
+                        \StringTok{"$97.5}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{\% CI$"}\NormalTok{,}
+                        \StringTok{"Contrast"}\NormalTok{,}
+                        \StringTok{"Difference"}\NormalTok{,}
+                        \StringTok{"$SE$"}\NormalTok{,}
+                        \StringTok{"$z$"}\NormalTok{,}
+                        \StringTok{"$p$"}\NormalTok{),}
+          \AttributeTok{escape =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{add\_header\_above}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{" "} \OtherTok{=} \DecValTok{5}\NormalTok{, }\StringTok{"Contrasts"} \OtherTok{=} \DecValTok{5}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \FunctionTok{c}\NormalTok{(}\StringTok{"HOLD\_position"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{footnote}\NormalTok{(}\AttributeTok{general =} \StringTok{"EMM = estimated marginal mean."}\NormalTok{,}
+             \AttributeTok{threeparttable =} \ConstantTok{TRUE}\NormalTok{,}
+             \AttributeTok{footnote\_as\_chunk =} \ConstantTok{TRUE}\NormalTok{,}
+             \AttributeTok{escape =} \ConstantTok{FALSE}\NormalTok{)}
+  \FunctionTok{return}\NormalTok{(emm.contr.tab)}
+\NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -297,8 +453,8 @@ To simulate data, first we looked at the distribution of the pilot data.
 
 \begin{figure}
 \centering
-\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-3-1.pdf}
-\caption{\label{fig:unnamed-chunk-3}Distribution of results from pilot data for ratings of both Density (\textbf{A}) and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low).}
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-7-1.pdf}
+\caption{\label{fig:unnamed-chunk-7}Distribution of results from pilot data for ratings of both Density (\textbf{A}) and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low).}
 \end{figure}
 
 \hypertarget{data-simulation}{%
@@ -461,7 +617,7 @@ While the data simulated in the previous section resembled the distribution of t
 
 First, the effects of Tempo were extremely large (3.2, 1.2, 3.1, 1.6), particularly for ratings of Group instrumentation (3.2, and 3.1). With such differences, a very high statistical power of about \(1 - \beta = 0.95\) can be achieved with 2 or 3 participants. And second, as mentioned before, estimating effects from pilot data is problematic, as it biases the results (\protect\hyperlink{ref-albersWhenPowerAnalyses2018}{Albers \& Lakens, 2018}).
 
-For this reason, we decided to maintain the distributions of probabilities for the first Tempo level (Low), as it is a goiod starting point to estimate the distribution of ratings that participants would assign, but simulated the second level (Tempo = High) with a much more conservative effect of 1 in all cases.
+For this reason, we decided to maintain the distributions of probabilities for the first Tempo level (Low), as it is a good starting point to estimate the distribution of ratings that participants would assign, but simulated the second level (Tempo = High) with a much more conservative effect of 1 in all cases.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -638,8 +794,8 @@ The distribution of these simulated data is represented in \ref{fig:final-sim}
 
 \begin{figure}
 \centering
-\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-8-1.pdf}
-\caption{\label{fig:unnamed-chunk-8}Distribution of results of ratings of both Density and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low). \textbf{A} pilot data; \textbf{B} simulation replicating pilot data distribution; \textbf{C} simulation with a more conservative effect.}
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-12-1.pdf}
+\caption{\label{fig:unnamed-chunk-12}Distribution of results of ratings of both Density and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low). \textbf{A} pilot data; \textbf{B} simulation replicating pilot data distribution; \textbf{C} simulation with a more conservative effect.}
 \end{figure}
 
 \hypertarget{power-analysis}{%
@@ -662,11 +818,11 @@ Using the final, simulated population (\emph{N} = 10000 participants, with 6 pai
 
 Then, models were fitted from the defined 100 random samples extracted from the simulated population.
 
-From each sample, two Cumulative Link Mixed Models (CLMM) were fitted: one for Density ratings, and one for arousal ratings. All models were fitted with the following call: \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}.
+From each sample, two Cumulative Link Mixed Models (CLMM) were fitted (see e.g., \protect\hyperlink{ref-taylorRatingNormsShould2022}{Taylor et al., 2022}): one for Density ratings, and one for arousal ratings. All models were fitted with the following call: \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}.
 
 This is, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant.
 
-For each random sample, we adjusted the number of participants per country (in this case, \emph{n} = 25) to achieve the target statistical power of at least \(1 - \beta = 0.95\) for both the Density and Arousal models.
+For each random sample, we adjusted the number of participants per country (in this case, \emph{n} = 25) to achieve the target statistical power of at least \(1 - \beta = 0.95\) for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of Instrumentation (\texttt{Solo.group}), participant country (\texttt{Participant.country}) and Music country (\texttt{Music.country}).
 
 \hypertarget{select-random-samples}{%
 \subsection{Select random samples}\label{select-random-samples}}
@@ -694,8 +850,8 @@ For each random sample, we adjusted the number of participants per country (in t
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{density-power-analysis}{%
-\subsection{Density power analysis}\label{density-power-analysis}}
+\hypertarget{visual-density-power-analysis}{%
+\subsection{Visual density power analysis}\label{visual-density-power-analysis}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -839,12 +995,12 @@ For each random sample, we adjusted the number of participants per country (in t
 
 \begin{figure}
 \centering
-\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-11-1.pdf}
-\caption{\label{fig:unnamed-chunk-11}Histogram of \emph{p}-values for the contrasts between Tempo conditions (Low, High) for all simulations. The estatistical power is the proportion of significant results. Significant results are in red.}
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-15-1.pdf}
+\caption{\label{fig:unnamed-chunk-15}Histogram of \emph{p}-values for the contrasts between Tempo conditions (Low, High) for all simulations. The estatistical power is the proportion of significant results. Significant results are in red.}
 \end{figure}
 
-\hypertarget{analysis-script}{%
-\section{Analysis script}\label{analysis-script}}
+\hypertarget{analysis-script-with-example-data}{%
+\section{Analysis script with example data}\label{analysis-script-with-example-data}}
 
 Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
 
@@ -891,24 +1047,174 @@ Because only the effect of Tempo was predicted and simulated \emph{a-priori}, al
 
 \begin{figure}
 \centering
-\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-13-1.pdf}
-\caption{\label{fig:unnamed-chunk-13}Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.}
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-17-1.pdf}
+\caption{\label{fig:unnamed-chunk-17}Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.}
 \end{figure}
 
-We fitted the model with the same structure: \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}. Estimated marginal means and confidence intervals for this simulation are represented in \ref{fig:mod-ex}.
+We fitted the models with the same structure: \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}. To obtain \emph{p}-values that represent main effects and interactions in an ANOVA-type manner (i.e.~the intercept is the grand mean of all cells, and estimates are differences between each category mean and the mean of all categories), we used \emph{sum-to-zero} contrasts\footnote{We did not do this for the models fitted for the power analysis, as it would not change the contrasts between Tempo conditions, but it is useful to display the full model results as we used \texttt{summary} (regression-type tables of estimates) instead on ANOVA-type tables (which are not available for models of \texttt{clmm} class).} (see e.g., \protect\hyperlink{ref-kaufmanContrastCodingLeast1974}{Kaufman \& Sweet, 1974}; \protect\hyperlink{ref-keppelDataAnalysisResearch1989}{Keppel \& Zedeck, 1989}).
+
+In all cases, results are for main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. \emph{High} was used as reference category for Tempo, and \emph{Japan} for both participant and music country. Contrasted levels are in square brackets.
+Significant effects are in bold.'')
+
+As pointed out by Lenth (\protect\hyperlink{ref-532079}{2021}), it is crucial to consider that ordinal models rely on estimates of a dependent variable (\emph{y}) following a logistic distribution. However, \emph{y} itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, \emph{y} is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
+
+\hypertarget{visual-density-example-model}{%
+\subsection{Visual density example model}\label{visual-density-example-model}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Density model}
-\NormalTok{model.den }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Density.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo }\SpecialCharTok{*}\NormalTok{ Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ Participant), }
-              \AttributeTok{data =}\NormalTok{ ex.data,}
-              \AttributeTok{contrasts =} \ConstantTok{TRUE}\NormalTok{)}
+\CommentTok{\# Fit Density model}
+\FunctionTok{options}\NormalTok{(}\AttributeTok{contrasts =} \FunctionTok{c}\NormalTok{(}\StringTok{"contr.sum"}\NormalTok{,}\StringTok{"contr.poly"}\NormalTok{))}
+\NormalTok{model.den }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Density.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo }\SpecialCharTok{*}\NormalTok{ Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+} 
+\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ Participant),}
+                  \AttributeTok{data =}\NormalTok{ ex.data)}
 
-\CommentTok{\# Arousal model}
-\NormalTok{model.aro }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Arousal.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo }\SpecialCharTok{*}\NormalTok{ Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ Participant), }
-              \AttributeTok{data =}\NormalTok{ ex.data,}
-              \AttributeTok{contrasts =} \ConstantTok{TRUE}\NormalTok{)}
+\CommentTok{\# Summary table}
+\FunctionTok{summary.sig}\NormalTok{(model.den, }\StringTok{"Visual density ratings model summary"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
+\begin{table}[H]
+
+\caption{\label{tab:mod-ex-den}Visual density ratings model summary}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{lcccc}
+\toprule
+Effects & Estimate & Std. Error & $z$ & $p$\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Thresholds}}\\
+\hline
+\hspace{1em}1|2 & -1.74 & 0.22 & -8.06 & \textbf{< 0.0001}\\
+\hspace{1em}2|3 & -0.29 & 0.19 & -1.51 & 0.13\\
+\hspace{1em}3|4 & 1.67 & 0.21 & 7.90 & \textbf{< 0.0001}\\
+\hspace{1em}4|5 & 3.80 & 0.31 & 12.07 & \textbf{< 0.0001}\\
+\addlinespace[0.3em]
+\hline
+\multicolumn{5}{l}{\textbf{Terms}}\\
+\hline
+\hspace{1em}Tempo [Low] & -0.41 & 0.12 & -3.44 & \textbf{< 0.001}\\
+\hspace{1em}Instrumentation [Group] & 1.54 & 0.15 & 10.33 & \textbf{< 0.0001}\\
+\hspace{1em}Participant country [Canada] & 0.38 & 0.24 & 1.63 & 0.1\\
+\hspace{1em}Participant country [Iran] & -0.25 & 0.21 & -1.19 & 0.23\\
+\hspace{1em}Music country [Canada] & 0.31 & 0.17 & 1.83 & 0.07\\
+\hspace{1em}Music country [Iran] & -0.28 & 0.17 & -1.69 & 0.09\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] & 0.00 & 0.12 & 0.03 & 0.98\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] & 0.02 & 0.17 & 0.12 & 0.9\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] & 0.04 & 0.15 & 0.30 & 0.77\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] & 0.07 & 0.17 & 0.39 & 0.7\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] & -0.11 & 0.15 & -0.73 & 0.46\\
+\hspace{1em}Tempo [Low] × Music country [Canada] & 0.07 & 0.17 & 0.41 & 0.68\\
+\hspace{1em}Tempo [Low] × Music country [Iran] & -0.21 & 0.17 & -1.29 & 0.2\\
+\hspace{1em}Instrumentation [Group] × Music country [Canada] & 0.21 & 0.17 & 1.27 & 0.21\\
+\hspace{1em}Instrumentation [Group] × Music country [Iran] & -0.06 & 0.17 & -0.37 & 0.71\\
+\hspace{1em}Participant country [Canada] × Music country [Canada] & 0.05 & 0.25 & 0.20 & 0.84\\
+\hspace{1em}Participant country [Iran] × Music country [Canada] & -0.28 & 0.22 & -1.28 & 0.2\\
+\hspace{1em}Participant country [Canada] × Music country [Iran] & -0.13 & 0.24 & -0.55 & 0.58\\
+\hspace{1em}Participant country [Iran] × Music country [Iran] & 0.08 & 0.21 & 0.40 & 0.69\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] & -0.04 & 0.17 & -0.25 & 0.81\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] & 0.14 & 0.15 & 0.93 & 0.35\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Canada] & -0.13 & 0.17 & -0.75 & 0.45\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Iran] & 0.23 & 0.17 & 1.39 & 0.17\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Canada] & 0.10 & 0.25 & 0.40 & 0.69\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Canada] & -0.11 & 0.22 & -0.50 & 0.62\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Iran] & -0.24 & 0.24 & -1.01 & 0.31\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Iran] & 0.42 & 0.21 & 2.01 & \textbf{0.0441}\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.25 & 0.25 & -1.02 & 0.31\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & 0.18 & 0.22 & 0.84 & 0.4\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & 0.03 & 0.24 & 0.13 & 0.9\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & -0.23 & 0.21 & -1.11 & 0.27\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.27 & 0.25 & -1.09 & 0.27\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & 0.22 & 0.22 & 1.02 & 0.31\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & 0.08 & 0.24 & 0.34 & 0.73\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & -0.47 & 0.21 & -2.23 & \textbf{0.0257}\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\hypertarget{arousal-example-model}{%
+\subsection{Arousal example model}\label{arousal-example-model}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Fit Arousal model}
+\FunctionTok{options}\NormalTok{(}\AttributeTok{contrasts =} \FunctionTok{c}\NormalTok{(}\StringTok{"contr.sum"}\NormalTok{,}\StringTok{"contr.poly"}\NormalTok{))}
+\NormalTok{model.aro }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Arousal.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo }\SpecialCharTok{*}\NormalTok{ Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+} 
+\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ Participant),}
+                  \AttributeTok{data =}\NormalTok{ ex.data)}
+
+\CommentTok{\# Summary table}
+\FunctionTok{summary.sig}\NormalTok{(model.aro, }\StringTok{"Arousal ratings model summary"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[H]
+
+\caption{\label{tab:mod-ex-aro}Arousal ratings model summary}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{lcccc}
+\toprule
+Effects & Estimate & Std. Error & $z$ & $p$\\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{5}{l}{\textbf{Thresholds}}\\
+\hline
+\hspace{1em}1|2 & -2.36 & 0.22 & -10.56 & \textbf{< 0.0001}\\
+\hspace{1em}2|3 & -0.29 & 0.18 & -1.64 & 0.1\\
+\hspace{1em}3|4 & 2.36 & 0.23 & 10.04 & \textbf{< 0.0001}\\
+\hspace{1em}4|5 & 3.92 & 0.32 & 12.25 & \textbf{< 0.0001}\\
+\addlinespace[0.3em]
+\hline
+\multicolumn{5}{l}{\textbf{Terms}}\\
+\hline
+\hspace{1em}Tempo [Low] & -0.64 & 0.12 & -5.32 & \textbf{< 0.0001}\\
+\hspace{1em}Instrumentation [Group] & 1.45 & 0.15 & 9.87 & \textbf{< 0.0001}\\
+\hspace{1em}Participant country [Canada] & -0.05 & 0.21 & -0.23 & 0.81\\
+\hspace{1em}Participant country [Iran] & 0.19 & 0.19 & 1.02 & 0.31\\
+\hspace{1em}Music country [Canada] & 0.23 & 0.16 & 1.43 & 0.15\\
+\hspace{1em}Music country [Iran] & -0.07 & 0.16 & -0.43 & 0.67\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] & -0.18 & 0.12 & -1.51 & 0.13\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] & -0.06 & 0.16 & -0.37 & 0.71\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] & 0.15 & 0.15 & 1.03 & 0.3\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] & -0.07 & 0.16 & -0.42 & 0.68\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] & 0.11 & 0.15 & 0.75 & 0.45\\
+\hspace{1em}Tempo [Low] × Music country [Canada] & 0.00 & 0.16 & -0.02 & 0.98\\
+\hspace{1em}Tempo [Low] × Music country [Iran] & -0.20 & 0.16 & -1.26 & 0.21\\
+\hspace{1em}Instrumentation [Group] × Music country [Canada] & 0.00 & 0.16 & 0.02 & 0.99\\
+\hspace{1em}Instrumentation [Group] × Music country [Iran] & 0.03 & 0.16 & 0.19 & 0.85\\
+\hspace{1em}Participant country [Canada] × Music country [Canada] & 0.10 & 0.23 & 0.45 & 0.65\\
+\hspace{1em}Participant country [Iran] × Music country [Canada] & 0.15 & 0.21 & 0.70 & 0.48\\
+\hspace{1em}Participant country [Canada] × Music country [Iran] & -0.11 & 0.23 & -0.48 & 0.63\\
+\hspace{1em}Participant country [Iran] × Music country [Iran] & 0.01 & 0.21 & 0.06 & 0.95\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] & -0.01 & 0.16 & -0.04 & 0.97\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] & 0.18 & 0.15 & 1.24 & 0.21\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Canada] & -0.10 & 0.16 & -0.63 & 0.53\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Iran] & 0.06 & 0.16 & 0.35 & 0.73\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Canada] & -0.07 & 0.23 & -0.31 & 0.76\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Canada] & 0.02 & 0.21 & 0.10 & 0.92\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Iran] & 0.37 & 0.23 & 1.58 & 0.11\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Iran] & -0.48 & 0.21 & -2.30 & \textbf{0.0214}\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.13 & 0.23 & -0.57 & 0.57\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & -0.05 & 0.21 & -0.23 & 0.82\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & -0.28 & 0.23 & -1.20 & 0.23\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & 0.19 & 0.21 & 0.92 & 0.36\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.15 & 0.23 & -0.65 & 0.51\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & 0.40 & 0.21 & 1.92 & 0.05\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & 0.23 & 0.23 & 0.98 & 0.33\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & -0.34 & 0.21 & -1.64 & 0.1\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\hypertarget{estimated-marginal-means-and-confidence-intervals-for-both-models}{%
+\subsection{Estimated marginal means and confidence intervals for both models}\label{estimated-marginal-means-and-confidence-intervals-for-both-models}}
+
+Estimated marginal means and confidence intervals for this simulation are represented in \ref{fig:plot-mod-ex}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \NormalTok{p7a }\OtherTok{\textless{}{-}} \FunctionTok{emmip}\NormalTok{(model.den, Solo.group }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo }\SpecialCharTok{|}\NormalTok{ Participant.country }\SpecialCharTok{+}\NormalTok{ Music.country,}
       \AttributeTok{CIs =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{+}
   \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Density"}\NormalTok{)}
@@ -926,9 +1232,100 @@ We fitted the model with the same structure: \texttt{clmm(DV\ \textasciitilde{}\
 
 \begin{figure}
 \centering
-\includegraphics{Power_analysis_files/figure-latex/mod-ex-1.pdf}
-\caption{\label{fig:mod-ex}Estimated marginal means and confidence intervals for the within-subject effects of Tempo from a ramdomly selected, simulated sample. Columns represent data from simulated participants from each country, while rows represent the simulated response to music from each country.}
+\includegraphics{Power_analysis_files/figure-latex/plot-mod-ex-1.pdf}
+\caption{\label{fig:plot-mod-ex}Estimated marginal means and confidence intervals for the within-subject effects of Tempo from a ramdomly selected, simulated sample. Columns represent data from simulated participants from each country, while rows represent the simulated response to music from each country.}
 \end{figure}
+
+\hypertarget{effect-of-tempo}{%
+\subsection{Effect of Tempo}\label{effect-of-tempo}}
+
+Estimated marginal mean and contrast between the levels of Tempo (Low, High) averaged over the levels of Instrumentation (\texttt{Solo.group}), participant country (\texttt{Participant.country}) and Music country (\texttt{Music.country}). To obtain the estimated distributions of the ordinal levels of the dependent variable, the argument \texttt{mode\ =\ "mean.class"} can be added to the \texttt{emmeans} function (see \protect\hyperlink{ref-532079}{Lenth, 2021}).
+
+\hypertarget{visual-density-model}{%
+\subsubsection{Visual density model}\label{visual-density-model}}
+
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the \texttt{emmeans} function from the \texttt{emmeans} package (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tempo.contr}\NormalTok{(model.den)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[H]
+
+\caption{\label{tab:tab-den-emms}Estimated marginal means and contrasts between Tempo conditions}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lccccclccc}
+\toprule
+\multicolumn{5}{c}{ } & \multicolumn{5}{c}{Contrasts} \\
+\cmidrule(l{3pt}r{3pt}){6-10}
+Tempo & EMM & $SE$ & $2.5\% CI$ & $97.5\% CI$ & Contrast & Difference & $SE$ & $z$ & $p$\\
+\midrule
+Low & -1.27 & 0.21 & -1.69 & -0.84 & Low - High & -0.81 & 0.24 & -3.44 & \textbf{< 0.001}\\
+High & -0.46 & 0.20 & -0.84 & -0.07 &  &  &  &  & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[para]
+\item \textit{Note: } 
+\item EMM = estimated marginal mean.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Figure of estimated marginal means and contrasts between tempo conditions.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{emmip}\NormalTok{(model.den, }\SpecialCharTok{\textasciitilde{}}\NormalTok{Tempo, }\AttributeTok{CIs =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+\hypertarget{arousal-model}{%
+\subsubsection{Arousal model}\label{arousal-model}}
+
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the \texttt{emmeans} function from the \texttt{emmeans} package (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tempo.contr}\NormalTok{(model.aro)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[H]
+
+\caption{\label{tab:tab-aro-emms}Estimated marginal means and contrasts between Tempo conditions}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lccccclccc}
+\toprule
+\multicolumn{5}{c}{ } & \multicolumn{5}{c}{Contrasts} \\
+\cmidrule(l{3pt}r{3pt}){6-10}
+Tempo & EMM & $SE$ & $2.5\% CI$ & $97.5\% CI$ & Contrast & Difference & $SE$ & $z$ & $p$\\
+\midrule
+Low & -1.55 & 0.21 & -1.96 & -1.13 & Low - High & -1.28 & 0.24 & -5.32 & \textbf{< 0.0001}\\
+High & -0.27 & 0.19 & -0.63 & 0.10 &  &  &  &  & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[para]
+\item \textit{Note: } 
+\item EMM = estimated marginal mean.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Figure of estimated marginal means and contrasts between tempo conditions.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{emmip}\NormalTok{(model.aro, }\SpecialCharTok{\textasciitilde{}}\NormalTok{Tempo, }\AttributeTok{CIs =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-19-1.pdf}
 
 \hypertarget{session}{%
 \section{Session info (for reproducibility)}\label{session}}
@@ -948,10 +1345,10 @@ We fitted the model with the same structure: \texttt{clmm(DV\ \textasciitilde{}\
 \emph{stats}, \emph{graphics}, \emph{grDevices}, \emph{utils}, \emph{datasets}, \emph{methods} and \emph{base}
 
 \textbf{other attached packages:}
-\emph{pander(v.0.6.5)}, \emph{ordinal(v.2022.11-16)}, \emph{emmeans(v.1.8.6)}, \emph{ggpubr(v.0.6.0)}, \emph{lubridate(v.1.9.2)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.0)}, \emph{dplyr(v.1.1.2)}, \emph{purrr(v.1.0.1)}, \emph{readr(v.2.1.4)}, \emph{tidyr(v.1.3.0)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.4.2)}, \emph{tidyverse(v.2.0.0)} and \emph{knitr(v.1.43)}
+\emph{pander(v.0.6.5)}, \emph{beepr(v.1.3)}, \emph{performance(v.0.10.4)}, \emph{kableExtra(v.1.3.4)}, \emph{ordinal(v.2022.11-16)}, \emph{emmeans(v.1.8.6)}, \emph{ggpubr(v.0.6.0)}, \emph{lubridate(v.1.9.2)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.0)}, \emph{dplyr(v.1.1.2)}, \emph{purrr(v.1.0.1)}, \emph{readr(v.2.1.4)}, \emph{tidyr(v.1.3.0)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.4.2)}, \emph{tidyverse(v.2.0.0)} and \emph{knitr(v.1.43)}
 
 \textbf{loaded via a namespace (and not attached):}
-\emph{gtable(v.0.3.3)}, \emph{xfun(v.0.39)}, \emph{rstatix(v.0.7.2)}, \emph{lattice(v.0.21-8)}, \emph{tzdb(v.0.4.0)}, \emph{numDeriv(v.2016.8-1.1)}, \emph{vctrs(v.0.6.3)}, \emph{tools(v.4.3.1)}, \emph{generics(v.0.1.3)}, \emph{fansi(v.1.0.4)}, \emph{highr(v.0.10)}, \emph{ucminf(v.1.2.0)}, \emph{pkgconfig(v.2.0.3)}, \emph{Matrix(v.1.5-4.1)}, \emph{lifecycle(v.1.0.3)}, \emph{compiler(v.4.3.1)}, \emph{farver(v.2.1.1)}, \emph{tinytex(v.0.45)}, \emph{munsell(v.0.5.0)}, \emph{codetools(v.0.2-19)}, \emph{carData(v.3.0-5)}, \emph{htmltools(v.0.5.5)}, \emph{yaml(v.2.3.7)}, \emph{pillar(v.1.9.0)}, \emph{car(v.3.1-2)}, \emph{MASS(v.7.3-60)}, \emph{abind(v.1.4-5)}, \emph{nlme(v.3.1-162)}, \emph{tidyselect(v.1.2.0)}, \emph{digest(v.0.6.31)}, \emph{mvtnorm(v.1.2-2)}, \emph{stringi(v.1.7.12)}, \emph{bookdown(v.0.34)}, \emph{labeling(v.0.4.2)}, \emph{cowplot(v.1.1.1)}, \emph{fastmap(v.1.1.1)}, \emph{grid(v.4.3.1)}, \emph{colorspace(v.2.1-0)}, \emph{cli(v.3.6.1)}, \emph{beepr(v.1.3)}, \emph{magrittr(v.2.0.3)}, \emph{utf8(v.1.2.3)}, \emph{broom(v.1.0.5)}, \emph{withr(v.2.5.0)}, \emph{scales(v.1.2.1)}, \emph{backports(v.1.4.1)}, \emph{timechange(v.0.2.0)}, \emph{estimability(v.1.4.1)}, \emph{rmarkdown(v.2.22)}, \emph{audio(v.0.1-10)}, \emph{gridExtra(v.2.3)}, \emph{ggsignif(v.0.6.4)}, \emph{hms(v.1.1.3)}, \emph{evaluate(v.0.21)}, \emph{rlang(v.1.1.1)}, \emph{Rcpp(v.1.0.10)}, \emph{xtable(v.1.8-4)}, \emph{glue(v.1.6.2)}, \emph{rstudioapi(v.0.14)} and \emph{R6(v.2.5.1)}
+\emph{gtable(v.0.3.3)}, \emph{xfun(v.0.39)}, \emph{insight(v.0.19.2)}, \emph{rstatix(v.0.7.2)}, \emph{lattice(v.0.21-8)}, \emph{tzdb(v.0.4.0)}, \emph{numDeriv(v.2016.8-1.1)}, \emph{vctrs(v.0.6.3)}, \emph{tools(v.4.3.1)}, \emph{generics(v.0.1.3)}, \emph{fansi(v.1.0.4)}, \emph{highr(v.0.10)}, \emph{ucminf(v.1.2.0)}, \emph{pkgconfig(v.2.0.3)}, \emph{Matrix(v.1.5-4.1)}, \emph{webshot(v.0.5.4)}, \emph{lifecycle(v.1.0.3)}, \emph{farver(v.2.1.1)}, \emph{compiler(v.4.3.1)}, \emph{tinytex(v.0.45)}, \emph{munsell(v.0.5.0)}, \emph{carData(v.3.0-5)}, \emph{htmltools(v.0.5.5)}, \emph{yaml(v.2.3.7)}, \emph{pillar(v.1.9.0)}, \emph{car(v.3.1-2)}, \emph{MASS(v.7.3-60)}, \emph{abind(v.1.4-5)}, \emph{nlme(v.3.1-162)}, \emph{tidyselect(v.1.2.0)}, \emph{rvest(v.1.0.3)}, \emph{digest(v.0.6.31)}, \emph{mvtnorm(v.1.2-2)}, \emph{stringi(v.1.7.12)}, \emph{bookdown(v.0.34)}, \emph{labeling(v.0.4.2)}, \emph{cowplot(v.1.1.1)}, \emph{fastmap(v.1.1.1)}, \emph{grid(v.4.3.1)}, \emph{colorspace(v.2.1-0)}, \emph{cli(v.3.6.1)}, \emph{magrittr(v.2.0.3)}, \emph{utf8(v.1.2.3)}, \emph{broom(v.1.0.5)}, \emph{withr(v.2.5.0)}, \emph{scales(v.1.2.1)}, \emph{backports(v.1.4.1)}, \emph{timechange(v.0.2.0)}, \emph{estimability(v.1.4.1)}, \emph{rmarkdown(v.2.22)}, \emph{httr(v.1.4.6)}, \emph{audio(v.0.1-10)}, \emph{gridExtra(v.2.3)}, \emph{ggsignif(v.0.6.4)}, \emph{hms(v.1.1.3)}, \emph{evaluate(v.0.21)}, \emph{viridisLite(v.0.4.2)}, \emph{rlang(v.1.1.1)}, \emph{Rcpp(v.1.0.10)}, \emph{xtable(v.1.8-4)}, \emph{glue(v.1.6.2)}, \emph{xml2(v.1.3.4)}, \emph{svglite(v.2.1.1)}, \emph{rstudioapi(v.0.14)}, \emph{R6(v.2.5.1)} and \emph{systemfonts(v.1.0.4)}
 
 \hypertarget{refs}{%
 \section*{Supplementary references}\label{refs}}
@@ -968,8 +1365,20 @@ Borders, J. C., Grande, A. A., \& Troche, M. S. (2022). \emph{Power {Analysis} w
 \leavevmode\vadjust pre{\hypertarget{ref-ordinalcit}{}}%
 Christensen, R. H. B. (2022). \emph{Ordinal---regression models for ordinal data}. \url{https://CRAN.R-project.org/package=ordinal}
 
+\leavevmode\vadjust pre{\hypertarget{ref-kaufmanContrastCodingLeast1974}{}}%
+Kaufman, D., \& Sweet, R. (1974). Contrast {Coding} in {Least Squares Regression Analysis}. \emph{American Educational Research Journal}, \emph{11}(4), 359--377. \url{https://doi.org/10.3102/00028312011004359}
+
+\leavevmode\vadjust pre{\hypertarget{ref-keppelDataAnalysisResearch1989}{}}%
+Keppel, G., \& Zedeck, S. (1989). \emph{Data analysis for research designs: {Analysis} of variance and multiple regression/correlation approaches}. {W.H. Freeman}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-532079}{}}%
+Lenth, R. V. (2021). \emph{Interpreting the results of a clmm model with one independent variable - some questions}. Cross Validated. \url{https://stats.stackexchange.com/q/532079}
+
 \leavevmode\vadjust pre{\hypertarget{ref-emmeanscit}{}}%
 Lenth, R. V. (2022). \emph{Emmeans: Estimated marginal means, aka least-squares means}. \url{https://CRAN.R-project.org/package=emmeans}
+
+\leavevmode\vadjust pre{\hypertarget{ref-taylorRatingNormsShould2022}{}}%
+Taylor, J. E., Rousselet, G. A., Scheepers, C., \& Sereno, S. C. (2022). Rating norms should be calculated from cumulative link mixed effects models. \emph{Behavior Research Methods}. \url{https://doi.org/10.3758/s13428-022-01814-7}
 
 \leavevmode\vadjust pre{\hypertarget{ref-ggplotcit}{}}%
 Wickham, H. (2016). \emph{ggplot2: Elegant graphics for data analysis}. Springer-Verlag New York. \url{https://ggplot2.tidyverse.org}
@@ -982,6 +1391,9 @@ Wickham, H., François, R., Henry, L., \& Müller, K. (2022). \emph{Dplyr: A gra
 
 \leavevmode\vadjust pre{\hypertarget{ref-knitrcit}{}}%
 Xie, Y. (2014). Knitr: A comprehensive tool for reproducible research in {R}. In V. Stodden, F. Leisch, \& R. D. Peng (Eds.), \emph{Implementing reproducible computational research}. {Chapman and Hall/CRC}. \url{https://doi.org/10.1201/9781315373461-1}
+
+\leavevmode\vadjust pre{\hypertarget{ref-kableExtracit}{}}%
+Zhu, H. (2020). \emph{kableExtra: Construct complex table with 'kable' and pipe syntax}. \url{https://CRAN.R-project.org/package=kableExtra}
 
 \end{CSLReferences}
 

@@ -12,3 +12,5 @@ lubridate
 ggpubr
 emmeans
 ordinal
+kableExtra
+performance
