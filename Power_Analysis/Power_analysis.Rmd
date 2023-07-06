@@ -664,11 +664,12 @@ ex.data <- samples.clmm.long %>%
 
 Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
 
-```{r cache = TRUE, fig.cap = "Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed lines represent the within-subject effect of the Tempo manipulation."}
+```{r fig.cap="Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.", message = FALSE, warning = FALSE, cache=TRUE}
 p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, color = Participant.country, shape = Music.country)) +
   geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
   geom_point(position = position_dodge(0.3), size = 3) +
-  geom_line(aes(group = factor(groupid)), size = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
+  geom_line(aes(group = factor(groupid)), 
+            linewidth = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
   labs(y= "Density", x = "Tempo", title = "Density") +
   scale_x_discrete(limits = c("Low", "High")) + 
   scale_size_discrete(breaks = c("Solo", "Group")) + 
@@ -678,7 +679,8 @@ p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, color = Participant.cou
 p6b <- ggplot(ex.data, aes(x = Tempo, y = Arousal.tempo, color = Participant.country, shape = Music.country)) +
    geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
   geom_point(position = position_dodge(0.3), size = 3) +
-  geom_line(aes(group = factor(groupid)), size = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
+  geom_line(aes(group = factor(groupid)), 
+            linewidth = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
   labs(y= "Arousal", x = "Tempo", title = "Arousal") +
   scale_x_discrete(limits = c("Low", "High")) + 
   scale_size_discrete(breaks = c("Solo", "Group")) + 
