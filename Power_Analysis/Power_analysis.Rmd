@@ -657,10 +657,10 @@ Using the final, simulated population (*N* = 10000 participants, with 6 paired o
 num_sims.clmm = 100 
 
 # Sample size for each simulation (number of participants per country)
-sample_size.clmm = 25 
+sample_size.clmm = 28 
 
 # Significance level
-alpha.clmm = 0.05 
+alpha.clmm = 0.025
 ```
 
 Then, models were fitted from the defined `r num_sims.clmm` random samples extracted from the simulated population. 
