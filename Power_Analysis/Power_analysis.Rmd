@@ -95,15 +95,15 @@ PES: \href{mailto:psavage@sfc.keio.ac.jp}{psavage@sfc.keio.ac.jp}.
 \rightskip\leftskip
 ```
 
-This document contains all code, and step by step explanations for all analyses, figures and tables (including supplementary figures and tables) for:
+This document contains all code, and step by step explanations for the simulation-based power analysis (including supplementary figures and tables) for:
 
 ```{=latex}
 \begin{hangparas}{.25in}{1}
-hadavi, S., Kuroda, J., Shimozono, T., Leongómez, J. D., \& Savage, P. E. (in prep). \textit{Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan} [Stage 1 Registered Report]. \url{https://doi.org/10.31234/osf.io/26yg5}
+Hadavi, S., Kuroda, J., Shimozono, T., Leongómez, J. D., \& Savage, P. E. (in prep). \textit{Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan} [Stage 1 Registered Report]. \url{https://doi.org/10.31234/osf.io/26yg5}
 \end{hangparas}
 ```
 
-Data available from the Open Science Framework (OSF): <https://doi.org/10.XXXXX/OSF.IO/XXXXX>. This document and its underlying code were created in `R Markdown` by Juan David Leongómez using \LaTeX.
+Data available from the *VisualEars* repository in GitHub: <https://github.com/comp-music-lab/VisualEars>. This document and its underlying code were created in `R Markdown` by Juan David Leongómez using \LaTeX.
 
 ------------------------------------------------------------------------
 
@@ -184,12 +184,12 @@ summary.sig <- function(mod, custom_caption) {
     mutate_at("rowname", str_replace_all, ":", " × ") |>
     mutate_at("rowname", str_replace_all, "`", "") |>
     mutate("rowname" = str_replace_all(rowname,
-                                       c("Tempo1" = "Tempo [Low]",
-                                         "Solo.group1" = "Instrumentation [Group]",
-                                         "Participant.country1" = "Participant country [Canada]",
-                                         "Participant.country2" = "Participant country [Iran]",
-                                         "Music.country1" = "Music country [Canada]",
-                                         "Music.country2" = "Music country [Iran]"))) |> 
+                                      c("Tempo1" = "Tempo [Low]",
+                                      "Solo.group1" = "Instrumentation [Group]",
+                                      "Participant.country1" = "Participant country [Canada]",
+                                      "Participant.country2" = "Participant country [Iran]",
+                                      "Music.country1" = "Music country [Canada]",
+                                      "Music.country2" = "Music country [Iran]"))) |> 
       mutate(Pr...z.. = pval.lev(Pr...z..)) |> 
       kable(digits = 2,
             booktabs = TRUE,
@@ -281,7 +281,6 @@ tempo.contr <- function(mod){
   return(emm.contr.tab)
 }
 ```
-
 
 # Data
 
@@ -657,7 +656,7 @@ Using the final, simulated population (*N* = 10000 participants, with 6 paired o
 num_sims.clmm = 100 
 
 # Sample size for each simulation (number of participants per country)
-sample_size.clmm = 28 
+sample_size.clmm = 30 
 
 # Significance level
 alpha.clmm = 0.025
@@ -698,23 +697,18 @@ samples.clmm.long <- left_join(samples.clmm, dat.sim, by = c("Participant",
 
 ```{r power-density, cache = TRUE, warning = FALSE, message = FALSE, error = FALSE}
 # Create empty data frame
-clmm.comps.den <- data.frame(Sample = 1:num_sims.clmm) #create empty data frame
+clmm.comps.den <- data.frame(Sample = 1:num_sims.clmm)
 
 # Loop to fit a model for each random sample and extract the p-value of the Tempo contrasts
 for (i in 1:num_sims.clmm){
   samp <- samples.clmm.long |>
     filter(sample.clmm == i)
-  tryCatch(mod <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
+  tryCatch(mod <- clmm(Density.tempo ~ 
+                         Tempo * Solo.group * Participant.country * Music.country + 
                          (1 + Tempo | Participant), data = samp),
-           error = function(e) {
-             message('Error')
-             print(e)
-           })
+           error = function(e) {})
   tryCatch(comp <- emmeans(mod, pairwise~Tempo),
-           error = function(e) {
-             message('Error')
-             print(e)
-           })
+           error = function(e) {})
   clmm.comps.den$p[i] <- round(data.frame(comp$contrast)$p.value, 3)
   clmm.comps.den$`Statistical signicance`[i] <- ifelse(clmm.comps.den$p[i] <= alpha.clmm, 
                                                        "Significant", "Non-significant")
@@ -728,23 +722,18 @@ power.clmm.den <- sum(clmm.comps.den$`Statistical signicance` == "Significant")/
 
 ```{r power-arousal, cache = TRUE, warning = FALSE, message = FALSE, error = FALSE}
 # Create empty data frame
-clmm.comps.aro <- data.frame(Sample = 1:num_sims.clmm) #create empty dataframe
+clmm.comps.aro <- data.frame(Sample = 1:num_sims.clmm)
 
 # Loop to fit a model for each random sample and extract the p-value of the Tempo contrasts
 for (i in 1:num_sims.clmm){
   samp <- samples.clmm.long |>
     filter(sample.clmm == i)
-  tryCatch(mod <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
+  tryCatch(mod <- clmm(Arousal.tempo ~ 
+                         Tempo * Solo.group * Participant.country * Music.country + 
                          (1 + Tempo | Participant), data = samp),
-           error = function(e) {
-             message('Error')
-             print(e)
-           })
+           error = function(e) {})
   tryCatch(comp <- emmeans(mod, pairwise~Tempo),
-           error = function(e) {
-             message('Error')
-             print(e)
-           })
+           error = function(e) {})
   clmm.comps.aro$p[i] <- round(data.frame(comp$contrast)$p.value, 3)
   clmm.comps.aro$`Statistical signicance`[i] <- ifelse(clmm.comps.aro$p[i] <= alpha.clmm, 
                                                        "Significant", "Non-significant")
@@ -761,7 +750,8 @@ p5a <- ggplot(clmm.comps.den, aes(x = p, fill = `Statistical signicance`)) +
   scale_fill_hue(direction = -1) +
   geom_histogram(bins = 1/alpha.clmm, breaks = seq(0, 1, alpha.clmm)) +
   labs(y = "Count", x = "p-value", title = "Density") +
-  annotate("text", x = 0.5, y = sum(clmm.comps.den$`Statistical signicance` == "Significant") * 0.9,
+  annotate("text", x = 0.5, 
+           y = sum(clmm.comps.den$`Statistical signicance` == "Significant") * 0.9,
            label = paste0("Power = ", round(power.clmm.den, 3),
                           "\nSample size = ", sample_size.clmm,
                           " participants per country\n(6 paired responses per participant)"))
@@ -770,7 +760,8 @@ p5b <- ggplot(clmm.comps.aro, aes(x = p, fill = `Statistical signicance`)) +
   scale_fill_hue(direction = -1) +
   geom_histogram(bins = 1/alpha.clmm, breaks = seq(0, 1, alpha.clmm)) +
   labs(y = "Count", x = "p-value", title = "Arousal") +
-  annotate("text", x = 0.5, y = sum(clmm.comps.aro$`Statistical signicance` == "Significant") * 0.9, 
+  annotate("text", x = 0.5, 
+           y = sum(clmm.comps.aro$`Statistical signicance` == "Significant") * 0.9, 
            label = paste0("Power = ", round(power.clmm.aro, 3), 
                           "\nSample size = ", sample_size.clmm, 
                           " participants per country\n(6 paired responses per participant)"))
@@ -787,6 +778,7 @@ p5
 Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
 
 ```{r}
+set.seed(2)
 # Select a random sample
 ex.data <- samples.clmm.long %>%
   filter(sample.clmm == sample(1:num_sims.clmm, 1, replace = TRUE))
@@ -795,7 +787,8 @@ ex.data <- samples.clmm.long %>%
 Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
 
 ```{r fig.cap="Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.", message = FALSE, warning = FALSE}
-p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, color = Participant.country, shape = Music.country)) +
+p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, 
+                           color = Participant.country, shape = Music.country)) +
   geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
   geom_point(position = position_dodge(0.3), size = 3) +
   geom_line(aes(group = factor(groupid)), 
@@ -806,7 +799,8 @@ p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, color = Participant.cou
   theme(plot.title = element_text(face = "bold", hjust = 0.5)) + 
   facet_wrap(~Solo.group)
 
-p6b <- ggplot(ex.data, aes(x = Tempo, y = Arousal.tempo, color = Participant.country, shape = Music.country)) +
+p6b <- ggplot(ex.data, aes(x = Tempo, y = Arousal.tempo, 
+                           color = Participant.country, shape = Music.country)) +
    geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
   geom_point(position = position_dodge(0.3), size = 3) +
   geom_line(aes(group = factor(groupid)), 
@@ -827,8 +821,7 @@ We fitted the models with the same structure: `clmm(DV ~ Tempo * Solo.group * Pa
 
 [^1]: We did not do this for the models fitted for the power analysis, as it would not change the contrasts between Tempo conditions, but it is useful to display the full model results as we used `summary` (regression-type tables of estimates) instead on ANOVA-type tables (which are not available for models of `clmm` class).
 
-In all cases, results are for main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. *High* was used as reference category for Tempo, and *Japan* for both participant and music country. Contrasted levels are in square brackets.
-Significant effects are in bold.")
+In all cases, results are for main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. *High* was used as reference category for Tempo, and *Japan* for both participant and music country. Contrasted levels are in square brackets. Significant effects are in bold.
 
 As pointed out by @532079, it is crucial to consider that ordinal models rely on estimates of a dependent variable (*y*) following a logistic distribution. However, *y* itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, *y* is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
 
