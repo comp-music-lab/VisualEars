@@ -653,7 +653,7 @@ Using the final, simulated population (*N* = 10000 participants, with 6 paired o
 
 ```{r}
 # Number of simulations to run
-num_sims.clmm = 100 
+num_sims.clmm = 1000 
 
 # Sample size for each simulation (number of participants per country)
 sample_size.clmm = 30 
@@ -780,8 +780,9 @@ Here, using a randomly selected sample, we fit one model as if it was the data c
 ```{r}
 set.seed(2)
 # Select a random sample
-ex.data <- samples.clmm.long %>%
-  filter(sample.clmm == sample(1:num_sims.clmm, 1, replace = TRUE))
+ex.data <- samples.clmm.long  |> 
+  filter(sample.clmm == sample(1:num_sims.clmm, 1, replace = TRUE)) |> 
+  mutate_if(is.character,as.factor)
 ```
 
 Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
@@ -903,7 +904,7 @@ emmip(model.aro, ~Tempo, CIs = TRUE)
 ```
 
 ```{r echo = FALSE}
-# This is to play a sound when all code finishes running (as it takes several hours). 
+# This is to play a sound when all code finishes running (as it takes many hours). 
 # Not printed in output
 library(beepr)
 beep(sound = 3)
