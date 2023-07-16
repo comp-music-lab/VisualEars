@@ -932,7 +932,7 @@ library(beepr)
 beep(sound = 3)
 ```
 
-# Conclussion
+# Conclusion
 
 Based on the conducted power analysis (section \@ref(power-section)), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power ($1 - \beta$) greater than 0.95 for the *post-hoc* contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
 
