@@ -24,6 +24,7 @@ institute:
 date: "`r Sys.setlocale('LC_TIME','English');format(Sys.Date(),'%d %B, %Y')`"
 output:
   bookdown::pdf_document2:
+    citation_package: biblatex
     highlight: zenburn
     number_sections: yes
     keep_tex:  true
@@ -44,9 +45,12 @@ header-includes:
   \usepackage{fancyhdr}
   \pagestyle{fancy} 
   \usepackage{hanging}
+  \usepackage{csquotes}
+  \usepackage[style=apa,backend=biber]{biblatex}
   \lhead{Hadavi et al.} 
   \rhead{\textit{Power analysis}} 
   \renewcommand{\abstractname}{Description} 
+  \usepackage{multicol}
   \usepackage{orcidlink}
   \newcommand{\opensupplement}{\setcounter{table}{0}
     \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0}
@@ -72,7 +76,8 @@ always_allow_html: yes
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
 bibliography: Bib/Bibliography.bib
 urlcolor: blue
-linkcolor: gray
+citecolor: gray
+linkcolot: gray
 link-citations: true
 ---
 
@@ -128,6 +133,18 @@ set.seed(1)
 
 ------------------------------------------------------------------------
  
+# Power analysis strategy
+
+Our power analysis utilizes Monte Carlo simulations to account for the characteristics of our study data and the statistical model we are using. We employ Cumulative Link Mixed Models (CLMM) due to the nature of our dependent variables, which are based on 5-point Likert scales rather than normally distributed continuous data. Additionally, the paired responses from each participant are not independent of one another.
+
+While analytical power analysis can be conducted for certain statistical tests involving a single independent variable, such as correlation, simple regression, t-tests, and one-way ANOVA, more complex models and factorial designs require a simulation-based approach [e.g., @lakensSimulationBasedPowerAnalysis2021].
+
+In this approach, a statistical model is defined with a specific effect size of interest. Multiple synthetic datasets are generated based on this model, and the proportion of datasets resulting in significant results (i.e., rejecting the null hypothesis with $p < \alpha$) is computed ($\alpha = 0.025$ after applying Bonferroni correction). This proportion represents the Monte Carlo estimate of the test's power to detect the desired effect size.
+
+To perform our analysis, we simulated a population of 10,000 participants, each providing 6 paired responses, resulting in a total of 120,000 ratings for both visual density and arousal. From this simulated population, we randomly selected 1,000 samples. The sample size for each was adjusted until we achieved the desired statistical power. For each sample, we fitted models to assess both arousal and visual density ratings, incorporating fixed effects for Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and music country (Iran, Canada, Japan), along with their interactions. Random intercepts and slopes between Tempo conditions were included for each participant to ensure a fair representation of the experimental design [@barrRandomEffectsStructure2013; @debruineUnderstandingMixedEffectsModels2021].
+
+However, since our hypotheses focus solely on the effects of manipulating tempo, the power analysis primarily examines the *post-hoc* contrast between Tempo conditions, independent of instrumentation, participant country, and music country levels.
+
 # Preliminaries
 
 ## Load packages
@@ -145,6 +162,7 @@ library(emmeans)
 library(ordinal)
 library(kableExtra)
 library(performance)
+library(scales)
 ```
 
 ## Custom functions
@@ -288,7 +306,7 @@ tempo.contr <- function(mod){
 
 To simulate data, first we looked at the distribution of the pilot data. 
 
-```{r message = FALSE, cache = TRUE, fig.cap = "Distribution of results from pilot data for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
+```{r message = FALSE, cache = TRUE, fig.height = 5, fig.cap = "Distribution of results from pilot data for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
 # Load data
 sh1 <- read.csv("../sh1.csv") |> 
   mutate(Tempo = str_replace(Tempo, "low", "Low")) |> 
@@ -445,7 +463,7 @@ dat.sim.PILOT <- left_join(bind_rows(dat.den.gr.PILOT, dat.den.so.PILOT),
 
 The distribution of this replication of the pilot data distribution is represented in \@ref(fig:pilot-rep)
 
-```{r pilot-rep, cache = TRUE, fig.cap = "Distribution of results from a simulated replication of the pilot data distribution for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
+```{r pilot-rep, cache = TRUE, fig.height = 5, fig.cap = "Distribution of results from a simulated replication of the pilot data distribution for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
 # Plot distribution of results for density ratings
 p2a <- ggplot(dat.sim.PILOT, aes(x = Density.tempo, y = after_stat(density),
                                  fill = Tempo, color = Tempo)) +
@@ -592,7 +610,7 @@ for (i in 1:dim(uniqueval)[1]) {
 
 The distribution of these simulated data is represented in \@ref(fig:final-sim)
 
-```{r final-sim, cache = TRUE, fig.cap = "Distribution of results from a conservative simulated distribution for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
+```{r final-sim, cache = TRUE, fig.height = 5, fig.cap = "Distribution of results from a conservative simulated distribution for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
 # Plot distribution of results for density ratings
 p3a <- ggplot(dat.sim, aes(x = Density.tempo, y = after_stat(density),
                            fill = Tempo, color = Tempo)) +
@@ -647,9 +665,9 @@ p4 <- ggarrange(ggarrange(p1a + labs(title = "Pilot data"),
 p4
 ```
 
-# Power analysis
+# Power analysis {#power-section}
 
-Using the final, simulated population (*N* = 10000 participants, with 6 paired observations per participant), we conducted a simulation-based power analysis. To do this, we first defined the desired number of simulations, the sample size (per country) of each simulation, and the $\alpha$ value (significance level) for all statistical tests:
+Using the final, simulated population (*N* = 10,000 participants, with 6 paired observations per participant), we conducted a simulation-based power analysis. To do this, we first defined the desired number of simulations, the sample size (per country) of each simulation, and the $\alpha$ value (significance level) for all statistical tests:
 
 ```{r}
 # Number of simulations to run
@@ -662,13 +680,13 @@ sample_size.clmm = 30
 alpha.clmm = 0.025
 ```
 
-Then, models were fitted from the defined `r num_sims.clmm` random samples extracted from the simulated population. 
+Then, models were fitted from the defined `r number(num_sims.clmm, big.mark = ",")` random samples extracted from the simulated population. 
 
-From each sample, two Cumulative Link Mixed Models (CLMM) were fitted [see e.g., @taylorRatingNormsShould2022]: one for Density ratings, and one for arousal ratings. All models were fitted with the following call: `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. 
+From each sample, two Cumulative Link Mixed Models (CLMM) were fitted [see e.g., @taylorRatingNormsShould2022]: one for Density ratings, and one for arousal ratings. All models were fitted with the following call, simply changing the dependent variable (DV): `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. 
 
 This is, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. 
 
-For each random sample, we adjusted the number of participants per country (in this case, *n* = `r sample_size.clmm`) to achieve the target statistical power of at least $1 - \beta = 0.95$ for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of Instrumentation (`Solo.group`), participant country (`Participant.country`) and Music country (`Music.country`).
+For each random sample, we adjusted the number of participants per country (in this case, *n* = `r sample_size.clmm`) to achieve the target statistical power of at least $1 - \beta = 0.95$ for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of instrumentation, participant country and music country).
 
 ## Select random samples
 
@@ -695,6 +713,8 @@ samples.clmm.long <- left_join(samples.clmm, dat.sim, by = c("Participant",
 
 ## Visual density power analysis
 
+Please be aware that this part of the simulation can take many ours (or even days) to run.
+
 ```{r power-density, cache = TRUE, warning = FALSE, message = FALSE, error = FALSE}
 # Create empty data frame
 clmm.comps.den <- data.frame(Sample = 1:num_sims.clmm)
@@ -720,6 +740,8 @@ power.clmm.den <- sum(clmm.comps.den$`Statistical signicance` == "Significant")/
 
 ## Arousal power analysis
 
+Again, please keep in mind that this part of the simulation can take many ours (or even days) to run.
+
 ```{r power-arousal, cache = TRUE, warning = FALSE, message = FALSE, error = FALSE}
 # Create empty data frame
 clmm.comps.aro <- data.frame(Sample = 1:num_sims.clmm)
@@ -743,7 +765,7 @@ for (i in 1:num_sims.clmm){
 power.clmm.aro <- sum(clmm.comps.aro$`Statistical signicance` == "Significant")/num_sims.clmm
 ```
 
-## Achieved power
+## Achieved power plot
 
 ```{r fig.cap = "Histogram of *p*-values for the contrasts between Tempo conditions (Low, High) for all simulations. The estatistical power is the proportion of significant results. Significant results are in red."}
 p5a <- ggplot(clmm.comps.den, aes(x = p, fill = `Statistical signicance`)) +
@@ -773,7 +795,7 @@ p5 <- ggarrange(p5a, p5b,
 p5
 ```
 
-# Analysis script with example data
+# Analysis script with example data  {#example-data}
 
 Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
 
@@ -787,7 +809,7 @@ ex.data <- samples.clmm.long  |>
 
 Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
 
-```{r fig.cap="Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.", message = FALSE, warning = FALSE}
+```{r fig.height = 5, fig.cap="Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.", message = FALSE, warning = FALSE}
 p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, 
                            color = Participant.country, shape = Music.country)) +
   geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
@@ -818,13 +840,13 @@ p6 <- ggarrange(p6a, p6b,
 p6
 ```
 
-We fitted the models with the same structure: `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. To obtain *p*-values that represent main effects and interactions in an ANOVA-type manner (i.e. the intercept is the grand mean of all cells, and estimates are differences between each category mean and the mean of all categories), we used *sum-to-zero* contrasts[^1] [see e.g., @kaufmanContrastCodingLeast1974; @keppelDataAnalysisResearch1989].
+We fitted the models with the same structure, simply changing the dependent variable (DV): `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. To obtain *p*-values that represent main effects and interactions in an ANOVA-type manner (i.e. the intercept is the grand mean of all cells, and estimates are differences between each category mean and the mean of all categories), we used *sum-to-zero* contrasts[^1] [see e.g., @kaufmanContrastCodingLeast1974; @keppelDataAnalysisResearch1989].
 
 [^1]: We did not do this for the models fitted for the power analysis, as it would not change the contrasts between Tempo conditions, but it is useful to display the full model results as we used `summary` (regression-type tables of estimates) instead on ANOVA-type tables (which are not available for models of `clmm` class).
 
 In all cases, results are for main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. *High* was used as reference category for Tempo, and *Japan* for both participant and music country. Contrasted levels are in square brackets. Significant effects are in bold.
 
-As pointed out by @532079, it is crucial to consider that ordinal models rely on estimates of a dependent variable (*y*) following a logistic distribution. However, *y* itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, *y* is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
+As pointed out in a comment by @532079, author of the `emmeans` package [-@emmeanscit], it is crucial to consider that ordinal models rely on estimates of a dependent variable (*y*) following a logistic distribution. However, *y* itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, *y* is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
 
 ## Visual density example model
 
@@ -873,7 +895,7 @@ p7
 
 ## Effect of Tempo
 
-Estimated marginal mean and contrast between the levels of Tempo (Low, High) averaged over the levels of Instrumentation (`Solo.group`), participant country (`Participant.country`) and Music country (`Music.country`). To obtain the estimated distributions of the ordinal levels of the dependent variable, the argument `mode = "mean.class"` can be added to the `emmeans` function [see @532079].
+Estimated marginal mean and contrast between the levels of Tempo (Low, High) averaged over the levels of instrumentation (`Solo.group`), participant country (`Participant.country`) and music country (`Music.country`). To obtain the estimated distributions of the ordinal levels of the dependent variable, the argument `mode = "mean.class"` can be added to the `emmeans` function [see @532079].
 
 ### Visual density model
 
@@ -885,7 +907,7 @@ tempo.contr(model.den)
 
 Figure of estimated marginal means and contrasts between tempo conditions.
 
-```{r, message = FALSE}
+```{r fig.height = 4.5, fig.width = 6, message = FALSE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo on Visual density ratings, from a ramdomly selected, simulated sample, averaged across the levels of instrumentation, participant country and music country."}
 emmip(model.den, ~Tempo, CIs = TRUE)
 ```
 
@@ -899,7 +921,7 @@ tempo.contr(model.aro)
 
 Figure of estimated marginal means and contrasts between tempo conditions.
 
-```{r, message = FALSE}
+```{r fig.height = 4.5, fig.width = 6, message = FALSE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo on Arousal ratings, from a ramdomly selected, simulated sample, averaged across the levels of instrumentation, participant country and music country."}
 emmip(model.aro, ~Tempo, CIs = TRUE)
 ```
 
@@ -910,11 +932,25 @@ library(beepr)
 beep(sound = 3)
 ```
 
-# Session info (for reproducibility) {#session}
+# Conclussion
+
+Based on the conducted power analysis (section \@ref(power-section)), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power ($1 - \beta$) greater than 0.95 for the *post-hoc* contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
+
+In addition, as shown when fitting and reporting the models with a randomly selected sample (section \@ref(example-data)), the sample size and data structure are adequate to fit the planned models.
+
+# References {.unnumbered #refs}
+
+\begin{multicols}{2}
+\AtNextBibliography{\footnotesize}
+\printbibliography[heading=none]
+\normalsize
+\end{multicols}
+
+\def\printbibliography{}
+
+# Session info (for reproducibility) {.unnumbered #session}
 
 ```{r results = "hold"}
 library(pander)
 pander(sessionInfo(), locale = FALSE)
 ```
-
-# Supplementary references {#refs}

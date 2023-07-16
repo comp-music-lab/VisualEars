@@ -105,30 +105,7 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-\newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{3em}
-\newlength{\cslentryspacingunit} % times entry-spacing
-\setlength{\cslentryspacingunit}{\parskip}
-\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
- {% don't indent paragraphs
-  \setlength{\parindent}{0pt}
-  % turn on hanging indent if param 1 is 1
-  \ifodd #1
-  \let\oldpar\par
-  \def\par{\hangindent=\cslhangindent\oldpar}
-  \fi
-  % set entry spacing
-  \setlength{\parskip}{#2\cslentryspacingunit}
- }%
- {}
-\usepackage{calc}
-\newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
-\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
-\usepackage{caption} \usepackage{float} \floatplacement{figure}{H} \usepackage[utf8]{inputenc} \usepackage{fancyhdr} \pagestyle{fancy} \usepackage{hanging} \lhead{Hadavi et al.} \rhead{\textit{Power analysis}} \renewcommand{\abstractname}{Description} \usepackage{orcidlink} \newcommand{\opensupplement}{\setcounter{table}{0} \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}} \newcommand{\closesupplement}{\setcounter{table}{0} \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{\arabic{figure}}} \usepackage{multirow,booktabs,setspace} \DeclareCaptionLabelSeparator{point}{. } \DeclareCaptionLabelSeparator{point}{. } \captionsetup[table]{labelfont=bf, textfont=it, format=plain, labelsep=point, skip=5pt} \captionsetup[figure]{labelfont=bf, format=plain, justification=justified, singlelinecheck=false, labelsep=point, skip=5pt}
+\usepackage{caption} \usepackage{float} \floatplacement{figure}{H} \usepackage[utf8]{inputenc} \usepackage{fancyhdr} \pagestyle{fancy} \usepackage{hanging} \usepackage{csquotes} \usepackage[style=apa,backend=biber]{biblatex} \lhead{Hadavi et al.} \rhead{\textit{Power analysis}} \renewcommand{\abstractname}{Description} \usepackage{multicol} \usepackage{orcidlink} \newcommand{\opensupplement}{\setcounter{table}{0} \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}} \newcommand{\closesupplement}{\setcounter{table}{0} \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{\arabic{figure}}} \usepackage{multirow,booktabs,setspace} \DeclareCaptionLabelSeparator{point}{. } \DeclareCaptionLabelSeparator{point}{. } \captionsetup[table]{labelfont=bf, textfont=it, format=plain, labelsep=point, skip=5pt} \captionsetup[figure]{labelfont=bf, format=plain, justification=justified, singlelinecheck=false, labelsep=point, skip=5pt}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -146,6 +123,8 @@
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
+\usepackage[]{biblatex}
+\addbibresource{Bib/Bibliography.bib}
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
@@ -153,9 +132,9 @@
   pdftitle={Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan {[}Stage 1 Registered Report{]}},
   pdfauthor={Shafagh Hadavi 1; Junji Kuroda2; Taiki Shimozono2; Juan David Leongómez 3; Patrick E. Savage 1},
   colorlinks=true,
-  linkcolor={gray},
+  linkcolor={Maroon},
   filecolor={Maroon},
-  citecolor={Blue},
+  citecolor={gray},
   urlcolor={blue},
   pdfcreator={LaTeX via pandoc}}
 
@@ -168,7 +147,7 @@
 \makeatother
 \subtitle{Code and analyses: Simulation-based power analysis}
 \author{Shafagh Hadavi \orcidlink{0009-0008-1184-7238}\textsuperscript{1} \and Junji Kuroda\textsuperscript{2} \and Taiki Shimozono\textsuperscript{2} \and Juan David Leongómez \orcidlink{0000-0002-0092-6298}\textsuperscript{3} \and Patrick E. Savage \orcidlink{0000-0001-6996-7496}\textsuperscript{1}}
-\date{14 July, 2023}
+\date{16 July, 2023}
 
 \begin{document}
 \maketitle
@@ -213,15 +192,28 @@ Data available from the \emph{VisualEars} repository in GitHub: \url{https://git
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
+\hypertarget{power-analysis-strategy}{%
+\section{Power analysis strategy}\label{power-analysis-strategy}}
+
+Our power analysis utilizes Monte Carlo simulations to account for the characteristics of our study data and the statistical model we are using. We employ Cumulative Link Mixed Models (CLMM) due to the nature of our dependent variables, which are based on 5-point Likert scales rather than normally distributed continuous data. Additionally, the paired responses from each participant are not independent of one another.
+
+While analytical power analysis can be conducted for certain statistical tests involving a single independent variable, such as correlation, simple regression, t-tests, and one-way ANOVA, more complex models and factorial designs require a simulation-based approach \autocite[e.g.,][]{lakensSimulationBasedPowerAnalysis2021}.
+
+In this approach, a statistical model is defined with a specific effect size of interest. Multiple synthetic datasets are generated based on this model, and the proportion of datasets resulting in significant results (i.e., rejecting the null hypothesis with \(p < \alpha\)) is computed (\(\alpha = 0.025\) after applying Bonferroni correction). This proportion represents the Monte Carlo estimate of the test's power to detect the desired effect size.
+
+To perform our analysis, we simulated a population of 10,000 participants, each providing 6 paired responses, resulting in a total of 120,000 ratings for both visual density and arousal. From this simulated population, we randomly selected 1,000 samples. The sample size for each was adjusted until we achieved the desired statistical power. For each sample, we fitted models to assess both arousal and visual density ratings, incorporating fixed effects for Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and music country (Iran, Canada, Japan), along with their interactions. Random intercepts and slopes between Tempo conditions were included for each participant to ensure a fair representation of the experimental design \autocite{barrRandomEffectsStructure2013,debruineUnderstandingMixedEffectsModels2021}.
+
+However, since our hypotheses focus solely on the effects of manipulating tempo, the power analysis primarily examines the \emph{post-hoc} contrast between Tempo conditions, independent of instrumentation, participant country, and music country levels.
+
 \hypertarget{preliminaries}{%
 \section{Preliminaries}\label{preliminaries}}
 
 \hypertarget{load-packages}{%
 \subsection{Load packages}\label{load-packages}}
 
-This file was created using \texttt{knitr} (\protect\hyperlink{ref-knitrcit}{Xie, 2014}), mostly using \texttt{tidyverse} (\protect\hyperlink{ref-tidyversecit}{Wickham et al., 2019}) syntax. As such, data wrangling was mainly done using packages such as \texttt{dplyr} (\protect\hyperlink{ref-dplyrcit}{Wickham et al., 2022}), and most figures were created using \texttt{ggplot2} (\protect\hyperlink{ref-ggplotcit}{Wickham, 2016}). Tables were created using \texttt{knitr::kable} and \texttt{kableExtra} (\protect\hyperlink{ref-kableExtracit}{Zhu, 2020}).
+This file was created using \texttt{knitr} \autocite{knitrcit}, mostly using \texttt{tidyverse} \autocite{tidyversecit} syntax. As such, data wrangling was mainly done using packages such as \texttt{dplyr} \autocite{dplyrcit}, and most figures were created using \texttt{ggplot2} \autocite{ggplotcit}. Tables were created using \texttt{knitr::kable} and \texttt{kableExtra} \autocite{kableExtracit}.
 
-Cumulative Link Mixed Models (CLMM) were fitted using \texttt{ordinal} (\protect\hyperlink{ref-ordinalcit}{Christensen, 2022}), and contrasts and interactions were explored using \texttt{emmeans} (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}). In all cases, threshold between levels of the dependent (ordinal) variable, were set as flexible.
+Cumulative Link Mixed Models (CLMM) were fitted using \texttt{ordinal} \autocite{ordinalcit}, and contrasts and interactions were explored using \texttt{emmeans} \autocite{emmeanscit}. In all cases, threshold between levels of the dependent (ordinal) variable, were set as flexible.
 
 All packages used in this file can be directly installed from the Comprehensive R Archive Network (\href{https://cran.r-project.org/}{CRAN}). For a complete list of packages used to create this file, and their versions, see section \ref{session}, at the end of the document.
 
@@ -233,6 +225,7 @@ All packages used in this file can be directly installed from the Comprehensive 
 \FunctionTok{library}\NormalTok{(ordinal)}
 \FunctionTok{library}\NormalTok{(kableExtra)}
 \FunctionTok{library}\NormalTok{(performance)}
+\FunctionTok{library}\NormalTok{(scales)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -242,7 +235,7 @@ All packages used in this file can be directly installed from the Comprehensive 
 \hypertarget{clmm_generate_data}{%
 \subsubsection{\texorpdfstring{\texttt{clmm\_generate\_data}}{clmm\_generate\_data}}\label{clmm_generate_data}}
 
-To simulate ordinal data with a specific distribution, we used the function \texttt{clmm\_generate\_data}, created by Borders et al. (\protect\hyperlink{ref-bordersPowerAnalysisOrdinal2022}{2022}) as part of their tutorial (\url{https://osf.io/e6usd/}). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the \texttt{clmm-power-library.R} file (\url{https://osf.io/tjpkf}). Here, it is run from source, but in a slightly modified version of the file in which we changed the \texttt{mc.cores} parameter to 1, to avoid errors.
+To simulate ordinal data with a specific distribution, we used the function \texttt{clmm\_generate\_data}, created by \textcite{bordersPowerAnalysisOrdinal2022} as part of their tutorial (\url{https://osf.io/e6usd/}). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the \texttt{clmm-power-library.R} file (\url{https://osf.io/tjpkf}). Here, it is run from source, but in a slightly modified version of the file in which we changed the \texttt{mc.cores} parameter to 1, to avoid errors.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -460,9 +453,9 @@ To simulate data, first we looked at the distribution of the pilot data.
 \hypertarget{data-simulation}{%
 \subsection{Data simulation}\label{data-simulation}}
 
-While basing a power analysis on pilot data is problematic and can bias the sample size estimation (see e.g., \protect\hyperlink{ref-albersWhenPowerAnalyses2018}{Albers \& Lakens, 2018}), we used this distribution as a starting point.
+While basing a power analysis on pilot data is problematic and can bias the sample size estimation \autocite[see e.g.,][]{albersWhenPowerAnalyses2018}, we used this distribution as a starting point.
 
-The \texttt{clmm\_generate\_data} function (\protect\hyperlink{ref-bordersPowerAnalysisOrdinal2022}{Borders et al., 2022}) allows to simulate data with random and fixed effects with an ordinal outcome. In this case, we simulated data for Tempo, the within-subject variable for which there was an \emph{a-priori} prediction, replicating the distribution of the first level (Low) using a specified probability of each rating score (using the argument \texttt{control\_distribution}). The second level of that within-subject variable (Tempo = High) is generated based on a hypothesized effect (using the argument \texttt{effect}). Other important factors such as participant country and music country were randomly assigned, as there are no \emph{a-priori} predictions regarding these factors.
+The \texttt{clmm\_generate\_data} function \autocite{bordersPowerAnalysisOrdinal2022} allows to simulate data with random and fixed effects with an ordinal outcome. In this case, we simulated data for Tempo, the within-subject variable for which there was an \emph{a-priori} prediction, replicating the distribution of the first level (Low) using a specified probability of each rating score (using the argument \texttt{control\_distribution}). The second level of that within-subject variable (Tempo = High) is generated based on a hypothesized effect (using the argument \texttt{effect}). Other important factors such as participant country and music country were randomly assigned, as there are no \emph{a-priori} predictions regarding these factors.
 
 \hypertarget{replication-of-the-pilot-data-distribution}{%
 \subsubsection{Replication of the pilot data distribution}\label{replication-of-the-pilot-data-distribution}}
@@ -615,7 +608,7 @@ The distribution of this replication of the pilot data distribution is represent
 
 While the data simulated in the previous section resembled the distribution of the pilot data, using these data would be problematic for at least two reasons:
 
-First, the effects of Tempo were extremely large (3.2, 1.2, 3.1, 1.6), particularly for ratings of Group instrumentation (3.2, and 3.1). With such differences, a very high statistical power of about \(1 - \beta = 0.95\) can be achieved with 2 or 3 participants. And second, as mentioned before, estimating effects from pilot data is problematic, as it biases the results (\protect\hyperlink{ref-albersWhenPowerAnalyses2018}{Albers \& Lakens, 2018}).
+First, the effects of Tempo were extremely large (3.2, 1.2, 3.1, 1.6), particularly for ratings of Group instrumentation (3.2, and 3.1). With such differences, a very high statistical power of about \(1 - \beta = 0.95\) can be achieved with 2 or 3 participants. And second, as mentioned before, estimating effects from pilot data is problematic, as it biases the results \autocite{albersWhenPowerAnalyses2018}.
 
 For this reason, we decided to maintain the distributions of probabilities for the first Tempo level (Low), as it is a good starting point to estimate the distribution of ratings that participants would assign, but simulated the second level (Tempo = High) with a much more conservative effect of 1 in all cases.
 
@@ -798,10 +791,10 @@ The distribution of these simulated data is represented in \ref{fig:final-sim}
 \caption{\label{fig:unnamed-chunk-12}Distribution of results of ratings of both Density and Arousal (\textbf{B}), by Instrumentation (Group, Solo), and Tempo (High, Low). \textbf{A} pilot data; \textbf{B} simulation replicating pilot data distribution; \textbf{C} simulation with a more conservative effect.}
 \end{figure}
 
-\hypertarget{power-analysis}{%
-\section{Power analysis}\label{power-analysis}}
+\hypertarget{power-section}{%
+\section{Power analysis}\label{power-section}}
 
-Using the final, simulated population (\emph{N} = 10000 participants, with 6 paired observations per participant), we conducted a simulation-based power analysis. To do this, we first defined the desired number of simulations, the sample size (per country) of each simulation, and the \(\alpha\) value (significance level) for all statistical tests:
+Using the final, simulated population (\emph{N} = 10,000 participants, with 6 paired observations per participant), we conducted a simulation-based power analysis. To do this, we first defined the desired number of simulations, the sample size (per country) of each simulation, and the \(\alpha\) value (significance level) for all statistical tests:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -816,13 +809,13 @@ Using the final, simulated population (\emph{N} = 10000 participants, with 6 pai
 \end{Highlighting}
 \end{Shaded}
 
-Then, models were fitted from the defined 1000 random samples extracted from the simulated population.
+Then, models were fitted from the defined 1,000 random samples extracted from the simulated population.
 
-From each sample, two Cumulative Link Mixed Models (CLMM) were fitted (see e.g., \protect\hyperlink{ref-taylorRatingNormsShould2022}{Taylor et al., 2022}): one for Density ratings, and one for arousal ratings. All models were fitted with the following call: \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}.
+From each sample, two Cumulative Link Mixed Models (CLMM) were fitted \autocite[see e.g.,][]{taylorRatingNormsShould2022}: one for Density ratings, and one for arousal ratings. All models were fitted with the following call, simply changing the dependent variable (DV): \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}.
 
 This is, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant.
 
-For each random sample, we adjusted the number of participants per country (in this case, \emph{n} = 30) to achieve the target statistical power of at least \(1 - \beta = 0.95\) for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of Instrumentation (\texttt{Solo.group}), participant country (\texttt{Participant.country}) and Music country (\texttt{Music.country}).
+For each random sample, we adjusted the number of participants per country (in this case, \emph{n} = 30) to achieve the target statistical power of at least \(1 - \beta = 0.95\) for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of instrumentation, participant country and music country).
 
 \hypertarget{select-random-samples}{%
 \subsection{Select random samples}\label{select-random-samples}}
@@ -853,6 +846,8 @@ For each random sample, we adjusted the number of participants per country (in t
 \hypertarget{visual-density-power-analysis}{%
 \subsection{Visual density power analysis}\label{visual-density-power-analysis}}
 
+Please be aware that this part of the simulation can take many ours (or even days) to run.
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Create empty data frame}
@@ -881,6 +876,8 @@ For each random sample, we adjusted the number of participants per country (in t
 \hypertarget{arousal-power-analysis}{%
 \subsection{Arousal power analysis}\label{arousal-power-analysis}}
 
+Again, please keep in mind that this part of the simulation can take many ours (or even days) to run.
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Create empty data frame}
@@ -906,8 +903,8 @@ For each random sample, we adjusted the number of participants per country (in t
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{achieved-power}{%
-\subsection{Achieved power}\label{achieved-power}}
+\hypertarget{achieved-power-plot}{%
+\subsection{Achieved power plot}\label{achieved-power-plot}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -945,8 +942,8 @@ For each random sample, we adjusted the number of participants per country (in t
 \caption{\label{fig:unnamed-chunk-15}Histogram of \emph{p}-values for the contrasts between Tempo conditions (Low, High) for all simulations. The estatistical power is the proportion of significant results. Significant results are in red.}
 \end{figure}
 
-\hypertarget{analysis-script-with-example-data}{%
-\section{Analysis script with example data}\label{analysis-script-with-example-data}}
+\hypertarget{example-data}{%
+\section{Analysis script with example data}\label{example-data}}
 
 Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
 
@@ -1001,11 +998,11 @@ Because only the effect of Tempo was predicted and simulated \emph{a-priori}, al
 \caption{\label{fig:unnamed-chunk-17}Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.}
 \end{figure}
 
-We fitted the models with the same structure: \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}. To obtain \emph{p}-values that represent main effects and interactions in an ANOVA-type manner (i.e.~the intercept is the grand mean of all cells, and estimates are differences between each category mean and the mean of all categories), we used \emph{sum-to-zero} contrasts\footnote{We did not do this for the models fitted for the power analysis, as it would not change the contrasts between Tempo conditions, but it is useful to display the full model results as we used \texttt{summary} (regression-type tables of estimates) instead on ANOVA-type tables (which are not available for models of \texttt{clmm} class).} (see e.g., \protect\hyperlink{ref-kaufmanContrastCodingLeast1974}{Kaufman \& Sweet, 1974}; \protect\hyperlink{ref-keppelDataAnalysisResearch1989}{Keppel \& Zedeck, 1989}).
+We fitted the models with the same structure, simply changing the dependent variable (DV): \texttt{clmm(DV\ \textasciitilde{}\ Tempo\ *\ Solo.group\ *\ Participant.country\ *\ Music.country\ +\ (1\ +\ Tempo\ \textbar{}\ Participant)}. To obtain \emph{p}-values that represent main effects and interactions in an ANOVA-type manner (i.e.~the intercept is the grand mean of all cells, and estimates are differences between each category mean and the mean of all categories), we used \emph{sum-to-zero} contrasts\footnote{We did not do this for the models fitted for the power analysis, as it would not change the contrasts between Tempo conditions, but it is useful to display the full model results as we used \texttt{summary} (regression-type tables of estimates) instead on ANOVA-type tables (which are not available for models of \texttt{clmm} class).} \autocites[see e.g.,][]{kaufmanContrastCodingLeast1974,keppelDataAnalysisResearch1989}.
 
 In all cases, results are for main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. \emph{High} was used as reference category for Tempo, and \emph{Japan} for both participant and music country. Contrasted levels are in square brackets. Significant effects are in bold.
 
-As pointed out by Lenth (\protect\hyperlink{ref-532079}{2021}), it is crucial to consider that ordinal models rely on estimates of a dependent variable (\emph{y}) following a logistic distribution. However, \emph{y} itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, \emph{y} is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
+As pointed out in a comment by \textcite{532079}, author of the \texttt{emmeans} package \autocite*{emmeanscit}, it is crucial to consider that ordinal models rely on estimates of a dependent variable (\emph{y}) following a logistic distribution. However, \emph{y} itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, \emph{y} is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
 
 \hypertarget{visual-density-example-model}{%
 \subsection{Visual density example model}\label{visual-density-example-model}}
@@ -1188,12 +1185,12 @@ Estimated marginal means and confidence intervals for this simulation are repres
 \hypertarget{effect-of-tempo}{%
 \subsection{Effect of Tempo}\label{effect-of-tempo}}
 
-Estimated marginal mean and contrast between the levels of Tempo (Low, High) averaged over the levels of Instrumentation (\texttt{Solo.group}), participant country (\texttt{Participant.country}) and Music country (\texttt{Music.country}). To obtain the estimated distributions of the ordinal levels of the dependent variable, the argument \texttt{mode\ =\ "mean.class"} can be added to the \texttt{emmeans} function (see \protect\hyperlink{ref-532079}{Lenth, 2021}).
+Estimated marginal mean and contrast between the levels of Tempo (Low, High) averaged over the levels of instrumentation (\texttt{Solo.group}), participant country (\texttt{Participant.country}) and music country (\texttt{Music.country}). To obtain the estimated distributions of the ordinal levels of the dependent variable, the argument \texttt{mode\ =\ "mean.class"} can be added to the \texttt{emmeans} function \autocite[see][]{532079}.
 
 \hypertarget{visual-density-model}{%
 \subsubsection{Visual density model}\label{visual-density-model}}
 
-Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the \texttt{emmeans} function from the \texttt{emmeans} package (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}).
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the \texttt{emmeans} function from the \texttt{emmeans} package \autocite{emmeanscit}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1231,12 +1228,16 @@ Figure of estimated marginal means and contrasts between tempo conditions.
 \end{Highlighting}
 \end{Shaded}
 
+\begin{figure}
+\centering
 \includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-18-1.pdf}
+\caption{\label{fig:unnamed-chunk-18}Estimated marginal means and confidence intervals for the within-subject effects of Tempo on Visual density ratings, from a ramdomly selected, simulated sample, averaged across the levels of instrumentation, participant country and music country.}
+\end{figure}
 
 \hypertarget{arousal-model}{%
 \subsubsection{Arousal model}\label{arousal-model}}
 
-Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the \texttt{emmeans} function from the \texttt{emmeans} package (\protect\hyperlink{ref-emmeanscit}{Lenth, 2022}).
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the \texttt{emmeans} function from the \texttt{emmeans} package \autocite{emmeanscit}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1274,10 +1275,34 @@ Figure of estimated marginal means and contrasts between tempo conditions.
 \end{Highlighting}
 \end{Shaded}
 
+\begin{figure}
+\centering
 \includegraphics{Power_analysis_files/figure-latex/unnamed-chunk-19-1.pdf}
+\caption{\label{fig:unnamed-chunk-19}Estimated marginal means and confidence intervals for the within-subject effects of Tempo on Arousal ratings, from a ramdomly selected, simulated sample, averaged across the levels of instrumentation, participant country and music country.}
+\end{figure}
+
+\hypertarget{conclussion}{%
+\section{Conclussion}\label{conclussion}}
+
+Based on the conducted power analysis (section \ref{power-section}), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power (\(1 - \beta\)) greater than 0.95 for the \emph{post-hoc} contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
+
+In addition, as shown when fitting and reporting the models with a randomly selected sample (section \ref{example-data}), the sample size and data structure are adequate to fit the planned models.
+
+\hypertarget{refs}{%
+\section*{References}\label{refs}}
+\addcontentsline{toc}{section}{References}
+
+\begin{multicols}{2}
+\AtNextBibliography{\footnotesize}
+\printbibliography[heading=none]
+\normalsize
+\end{multicols}
+
+\def\printbibliography{}
 
 \hypertarget{session}{%
-\section{Session info (for reproducibility)}\label{session}}
+\section*{Session info (for reproducibility)}\label{session}}
+\addcontentsline{toc}{section}{Session info (for reproducibility)}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1294,56 +1319,11 @@ Figure of estimated marginal means and contrasts between tempo conditions.
 \emph{stats}, \emph{graphics}, \emph{grDevices}, \emph{utils}, \emph{datasets}, \emph{methods} and \emph{base}
 
 \textbf{other attached packages:}
-\emph{pander(v.0.6.5)}, \emph{beepr(v.1.3)}, \emph{performance(v.0.10.4)}, \emph{kableExtra(v.1.3.4)}, \emph{ordinal(v.2022.11-16)}, \emph{emmeans(v.1.8.6)}, \emph{ggpubr(v.0.6.0)}, \emph{lubridate(v.1.9.2)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.0)}, \emph{dplyr(v.1.1.2)}, \emph{purrr(v.1.0.1)}, \emph{readr(v.2.1.4)}, \emph{tidyr(v.1.3.0)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.4.2)}, \emph{tidyverse(v.2.0.0)} and \emph{knitr(v.1.43)}
+\emph{pander(v.0.6.5)}, \emph{beepr(v.1.3)}, \emph{scales(v.1.2.1)}, \emph{performance(v.0.10.4)}, \emph{kableExtra(v.1.3.4)}, \emph{ordinal(v.2022.11-16)}, \emph{emmeans(v.1.8.6)}, \emph{ggpubr(v.0.6.0)}, \emph{lubridate(v.1.9.2)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.0)}, \emph{dplyr(v.1.1.2)}, \emph{purrr(v.1.0.1)}, \emph{readr(v.2.1.4)}, \emph{tidyr(v.1.3.0)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.4.2)}, \emph{tidyverse(v.2.0.0)} and \emph{knitr(v.1.43)}
 
 \textbf{loaded via a namespace (and not attached):}
-\emph{gtable(v.0.3.3)}, \emph{xfun(v.0.39)}, \emph{insight(v.0.19.2)}, \emph{rstatix(v.0.7.2)}, \emph{lattice(v.0.21-8)}, \emph{tzdb(v.0.4.0)}, \emph{numDeriv(v.2016.8-1.1)}, \emph{vctrs(v.0.6.3)}, \emph{tools(v.4.3.1)}, \emph{generics(v.0.1.3)}, \emph{parallel(v.4.3.1)}, \emph{fansi(v.1.0.4)}, \emph{highr(v.0.10)}, \emph{ucminf(v.1.2.0)}, \emph{pkgconfig(v.2.0.3)}, \emph{Matrix(v.1.5-4.1)}, \emph{webshot(v.0.5.4)}, \emph{lifecycle(v.1.0.3)}, \emph{farver(v.2.1.1)}, \emph{compiler(v.4.3.1)}, \emph{tinytex(v.0.45)}, \emph{munsell(v.0.5.0)}, \emph{codetools(v.0.2-19)}, \emph{carData(v.3.0-5)}, \emph{htmltools(v.0.5.5)}, \emph{yaml(v.2.3.7)}, \emph{pillar(v.1.9.0)}, \emph{car(v.3.1-2)}, \emph{MASS(v.7.3-60)}, \emph{abind(v.1.4-5)}, \emph{nlme(v.3.1-162)}, \emph{tidyselect(v.1.2.0)}, \emph{rvest(v.1.0.3)}, \emph{digest(v.0.6.31)}, \emph{mvtnorm(v.1.2-2)}, \emph{stringi(v.1.7.12)}, \emph{bookdown(v.0.34)}, \emph{labeling(v.0.4.2)}, \emph{cowplot(v.1.1.1)}, \emph{fastmap(v.1.1.1)}, \emph{grid(v.4.3.1)}, \emph{colorspace(v.2.1-0)}, \emph{cli(v.3.6.1)}, \emph{magrittr(v.2.0.3)}, \emph{utf8(v.1.2.3)}, \emph{broom(v.1.0.5)}, \emph{withr(v.2.5.0)}, \emph{scales(v.1.2.1)}, \emph{backports(v.1.4.1)}, \emph{timechange(v.0.2.0)}, \emph{estimability(v.1.4.1)}, \emph{rmarkdown(v.2.22)}, \emph{httr(v.1.4.6)}, \emph{audio(v.0.1-10)}, \emph{gridExtra(v.2.3)}, \emph{ggsignif(v.0.6.4)}, \emph{hms(v.1.1.3)}, \emph{evaluate(v.0.21)}, \emph{viridisLite(v.0.4.2)}, \emph{rlang(v.1.1.1)}, \emph{Rcpp(v.1.0.10)}, \emph{xtable(v.1.8-4)}, \emph{glue(v.1.6.2)}, \emph{xml2(v.1.3.4)}, \emph{svglite(v.2.1.1)}, \emph{rstudioapi(v.0.14)}, \emph{R6(v.2.5.1)} and \emph{systemfonts(v.1.0.4)}
+\emph{gtable(v.0.3.3)}, \emph{xfun(v.0.39)}, \emph{insight(v.0.19.2)}, \emph{rstatix(v.0.7.2)}, \emph{lattice(v.0.21-8)}, \emph{tzdb(v.0.4.0)}, \emph{numDeriv(v.2016.8-1.1)}, \emph{vctrs(v.0.6.3)}, \emph{tools(v.4.3.1)}, \emph{generics(v.0.1.3)}, \emph{fansi(v.1.0.4)}, \emph{highr(v.0.10)}, \emph{ucminf(v.1.2.0)}, \emph{pkgconfig(v.2.0.3)}, \emph{Matrix(v.1.5-4.1)}, \emph{webshot(v.0.5.4)}, \emph{lifecycle(v.1.0.3)}, \emph{farver(v.2.1.1)}, \emph{compiler(v.4.3.1)}, \emph{tinytex(v.0.45)}, \emph{munsell(v.0.5.0)}, \emph{carData(v.3.0-5)}, \emph{htmltools(v.0.5.5)}, \emph{yaml(v.2.3.7)}, \emph{pillar(v.1.9.0)}, \emph{car(v.3.1-2)}, \emph{MASS(v.7.3-60)}, \emph{abind(v.1.4-5)}, \emph{nlme(v.3.1-162)}, \emph{tidyselect(v.1.2.0)}, \emph{rvest(v.1.0.3)}, \emph{digest(v.0.6.31)}, \emph{mvtnorm(v.1.2-2)}, \emph{stringi(v.1.7.12)}, \emph{bookdown(v.0.34)}, \emph{labeling(v.0.4.2)}, \emph{cowplot(v.1.1.1)}, \emph{fastmap(v.1.1.1)}, \emph{grid(v.4.3.1)}, \emph{colorspace(v.2.1-0)}, \emph{cli(v.3.6.1)}, \emph{magrittr(v.2.0.3)}, \emph{utf8(v.1.2.3)}, \emph{broom(v.1.0.5)}, \emph{withr(v.2.5.0)}, \emph{backports(v.1.4.1)}, \emph{timechange(v.0.2.0)}, \emph{estimability(v.1.4.1)}, \emph{rmarkdown(v.2.22)}, \emph{httr(v.1.4.6)}, \emph{audio(v.0.1-10)}, \emph{gridExtra(v.2.3)}, \emph{ggsignif(v.0.6.4)}, \emph{hms(v.1.1.3)}, \emph{evaluate(v.0.21)}, \emph{viridisLite(v.0.4.2)}, \emph{rlang(v.1.1.1)}, \emph{Rcpp(v.1.0.10)}, \emph{xtable(v.1.8-4)}, \emph{glue(v.1.6.2)}, \emph{xml2(v.1.3.4)}, \emph{svglite(v.2.1.1)}, \emph{rstudioapi(v.0.14)}, \emph{R6(v.2.5.1)} and \emph{systemfonts(v.1.0.4)}
 
-\hypertarget{refs}{%
-\section*{Supplementary references}\label{refs}}
-\addcontentsline{toc}{section}{Supplementary references}
-
-\hypertarget{refs}{}
-\begin{CSLReferences}{1}{0}
-\leavevmode\vadjust pre{\hypertarget{ref-albersWhenPowerAnalyses2018}{}}%
-Albers, C., \& Lakens, D. (2018). When power analyses based on pilot data are biased: {Inaccurate} effect size estimators and follow-up bias. \emph{Journal of Experimental Social Psychology}, \emph{74}, 187--195. \url{https://doi.org/10.1016/j.jesp.2017.09.004}
-
-\leavevmode\vadjust pre{\hypertarget{ref-bordersPowerAnalysisOrdinal2022}{}}%
-Borders, J. C., Grande, A. A., \& Troche, M. S. (2022). \emph{Power {Analysis} with {Ordinal Outcomes}: {A Tutorial}}. \url{https://osf.io/8sc5e}
-
-\leavevmode\vadjust pre{\hypertarget{ref-ordinalcit}{}}%
-Christensen, R. H. B. (2022). \emph{Ordinal---regression models for ordinal data}. \url{https://CRAN.R-project.org/package=ordinal}
-
-\leavevmode\vadjust pre{\hypertarget{ref-kaufmanContrastCodingLeast1974}{}}%
-Kaufman, D., \& Sweet, R. (1974). Contrast {Coding} in {Least Squares Regression Analysis}. \emph{American Educational Research Journal}, \emph{11}(4), 359--377. \url{https://doi.org/10.3102/00028312011004359}
-
-\leavevmode\vadjust pre{\hypertarget{ref-keppelDataAnalysisResearch1989}{}}%
-Keppel, G., \& Zedeck, S. (1989). \emph{Data analysis for research designs: {Analysis} of variance and multiple regression/correlation approaches}. {W.H. Freeman}.
-
-\leavevmode\vadjust pre{\hypertarget{ref-532079}{}}%
-Lenth, R. V. (2021). \emph{Interpreting the results of a clmm model with one independent variable - some questions}. Cross Validated. \url{https://stats.stackexchange.com/q/532079}
-
-\leavevmode\vadjust pre{\hypertarget{ref-emmeanscit}{}}%
-Lenth, R. V. (2022). \emph{Emmeans: Estimated marginal means, aka least-squares means}. \url{https://CRAN.R-project.org/package=emmeans}
-
-\leavevmode\vadjust pre{\hypertarget{ref-taylorRatingNormsShould2022}{}}%
-Taylor, J. E., Rousselet, G. A., Scheepers, C., \& Sereno, S. C. (2022). Rating norms should be calculated from cumulative link mixed effects models. \emph{Behavior Research Methods}. \url{https://doi.org/10.3758/s13428-022-01814-7}
-
-\leavevmode\vadjust pre{\hypertarget{ref-ggplotcit}{}}%
-Wickham, H. (2016). \emph{ggplot2: Elegant graphics for data analysis}. Springer-Verlag New York. \url{https://ggplot2.tidyverse.org}
-
-\leavevmode\vadjust pre{\hypertarget{ref-tidyversecit}{}}%
-Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J., Robinson, D., Seidel, D. P., Spinu, V., \ldots{} Yutani, H. (2019). Welcome to the {tidyverse}. \emph{Journal of Open Source Software}, \emph{4}(43), 1686. \url{https://doi.org/10.21105/joss.01686}
-
-\leavevmode\vadjust pre{\hypertarget{ref-dplyrcit}{}}%
-Wickham, H., François, R., Henry, L., \& Müller, K. (2022). \emph{Dplyr: A grammar of data manipulation}. \url{https://CRAN.R-project.org/package=dplyr}
-
-\leavevmode\vadjust pre{\hypertarget{ref-knitrcit}{}}%
-Xie, Y. (2014). Knitr: A comprehensive tool for reproducible research in {R}. In V. Stodden, F. Leisch, \& R. D. Peng (Eds.), \emph{Implementing reproducible computational research}. {Chapman and Hall/CRC}. \url{https://doi.org/10.1201/9781315373461-1}
-
-\leavevmode\vadjust pre{\hypertarget{ref-kableExtracit}{}}%
-Zhu, H. (2020). \emph{kableExtra: Construct complex table with 'kable' and pipe syntax}. \url{https://CRAN.R-project.org/package=kableExtra}
-
-\end{CSLReferences}
+\printbibliography
 
 \end{document}
