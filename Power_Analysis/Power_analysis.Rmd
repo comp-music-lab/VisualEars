@@ -850,7 +850,7 @@ As pointed out in a comment by @532079, author of the `emmeans` package [-@emmea
 
 ## Visual density example model
 
-```{r mod-ex-den, warning = FALSE}
+```{r mod-ex-den, warning = FALSE, cache = TRUE}
 # Fit Density model
 options(contrasts = c("contr.sum","contr.poly"))
 model.den <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
@@ -863,7 +863,7 @@ summary.sig(model.den, "Visual density ratings model summary")
 
 ## Arousal example model
 
-```{r mod-ex-aro, warning = FALSE}
+```{r mod-ex-aro, warning = FALSE, cache = TRUE}
 # Fit Arousal model
 options(contrasts = c("contr.sum","contr.poly"))
 model.aro <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
@@ -934,7 +934,7 @@ beep(sound = 3)
 
 # Conclusion
 
-Based on the conducted power analysis (section \@ref(power-section)), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power ($1 - \beta$) greater than 0.95 for the planned contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
+Based on the conducted power analysis (section \@ref(power-section)), it can be inferred that a sample size of `r sample_size.clmm` participants per country (`r sample_size.clmm*3` participants in total) would yield a statistical power ($1 - \beta$) greater than 0.95 for the planned contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
 
 In addition, as shown when fitting and reporting the models with a randomly selected sample (section \@ref(example-data)), the sample size and data structure are adequate to fit the planned models.
 
