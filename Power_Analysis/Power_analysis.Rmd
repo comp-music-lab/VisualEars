@@ -143,7 +143,7 @@ In this approach, a statistical model is defined with a specific effect size of 
 
 To perform our analysis, we simulated a population of 10,000 participants, each providing 6 paired responses, resulting in a total of 120,000 ratings for both visual density and arousal. From this simulated population, we randomly selected 1,000 samples. The sample size for each was adjusted until we achieved the desired statistical power. For each sample, we fitted models to assess both arousal and visual density ratings, incorporating fixed effects for Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and music country (Iran, Canada, Japan), along with their interactions. Random intercepts and slopes between Tempo conditions were included for each participant to ensure a fair representation of the experimental design [@barrRandomEffectsStructure2013; @debruineUnderstandingMixedEffectsModels2021].
 
-However, since our hypotheses focus solely on the effects of manipulating tempo, the power analysis primarily examines the *post-hoc* contrast between Tempo conditions, independent of instrumentation, participant country, and music country levels.
+However, since our hypotheses focus solely on the effects of manipulating tempo, the power analysis primarily examines the planned contrast between Tempo conditions, independent of instrumentation, participant country, and music country levels.
 
 # Preliminaries
 
@@ -674,10 +674,10 @@ Using the final, simulated population (*N* = 10,000 participants, with 6 paired 
 num_sims.clmm = 1000 
 
 # Sample size for each simulation (number of participants per country)
-sample_size.clmm = 30 
+sample_size.clmm = 24 
 
 # Significance level
-alpha.clmm = 0.025
+alpha.clmm = 0.05
 ```
 
 Then, models were fitted from the defined `r number(num_sims.clmm, big.mark = ",")` random samples extracted from the simulated population. 
@@ -800,7 +800,7 @@ p5
 Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
 
 ```{r}
-set.seed(2)
+set.seed(1)
 # Select a random sample
 ex.data <- samples.clmm.long  |> 
   filter(sample.clmm == sample(1:num_sims.clmm, 1, replace = TRUE)) |> 
@@ -854,7 +854,7 @@ As pointed out in a comment by @532079, author of the `emmeans` package [-@emmea
 # Fit Density model
 options(contrasts = c("contr.sum","contr.poly"))
 model.den <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
-                    (1 | Participant),
+                    (1 + Tempo | Participant),
                   data = ex.data)
 
 # Summary table
@@ -867,7 +867,7 @@ summary.sig(model.den, "Visual density ratings model summary")
 # Fit Arousal model
 options(contrasts = c("contr.sum","contr.poly"))
 model.aro <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
-                    (1 | Participant),
+                    (1 + Tempo | Participant),
                   data = ex.data)
 
 # Summary table
@@ -934,7 +934,7 @@ beep(sound = 3)
 
 # Conclusion
 
-Based on the conducted power analysis (section \@ref(power-section)), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power ($1 - \beta$) greater than 0.95 for the *post-hoc* contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
+Based on the conducted power analysis (section \@ref(power-section)), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power ($1 - \beta$) greater than 0.95 for the planned contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
 
 In addition, as shown when fitting and reporting the models with a randomly selected sample (section \@ref(example-data)), the sample size and data structure are adequate to fit the planned models.
 

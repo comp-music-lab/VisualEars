@@ -147,7 +147,7 @@
 \makeatother
 \subtitle{Code and analyses: Simulation-based power analysis}
 \author{Shafagh Hadavi \orcidlink{0009-0008-1184-7238}\textsuperscript{1} \and Junji Kuroda\textsuperscript{2} \and Taiki Shimozono\textsuperscript{2} \and Juan David Leongómez \orcidlink{0000-0002-0092-6298}\textsuperscript{3} \and Patrick E. Savage \orcidlink{0000-0001-6996-7496}\textsuperscript{1}}
-\date{16 July, 2023}
+\date{20 August, 2023}
 
 \begin{document}
 \maketitle
@@ -203,7 +203,7 @@ In this approach, a statistical model is defined with a specific effect size of 
 
 To perform our analysis, we simulated a population of 10,000 participants, each providing 6 paired responses, resulting in a total of 120,000 ratings for both visual density and arousal. From this simulated population, we randomly selected 1,000 samples. The sample size for each was adjusted until we achieved the desired statistical power. For each sample, we fitted models to assess both arousal and visual density ratings, incorporating fixed effects for Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and music country (Iran, Canada, Japan), along with their interactions. Random intercepts and slopes between Tempo conditions were included for each participant to ensure a fair representation of the experimental design \autocite{barrRandomEffectsStructure2013,debruineUnderstandingMixedEffectsModels2021}.
 
-However, since our hypotheses focus solely on the effects of manipulating tempo, the power analysis primarily examines the \emph{post-hoc} contrast between Tempo conditions, independent of instrumentation, participant country, and music country levels.
+However, since our hypotheses focus solely on the effects of manipulating tempo, the power analysis primarily examines the planned contrast between Tempo conditions, independent of instrumentation, participant country, and music country levels.
 
 \hypertarget{preliminaries}{%
 \section{Preliminaries}\label{preliminaries}}
@@ -802,10 +802,10 @@ Using the final, simulated population (\emph{N} = 10,000 participants, with 6 pa
 \NormalTok{num\_sims.clmm }\OtherTok{=} \DecValTok{1000} 
 
 \CommentTok{\# Sample size for each simulation (number of participants per country)}
-\NormalTok{sample\_size.clmm }\OtherTok{=} \DecValTok{30} 
+\NormalTok{sample\_size.clmm }\OtherTok{=} \DecValTok{24} 
 
 \CommentTok{\# Significance level}
-\NormalTok{alpha.clmm }\OtherTok{=} \FloatTok{0.025}
+\NormalTok{alpha.clmm }\OtherTok{=} \FloatTok{0.05}
 \end{Highlighting}
 \end{Shaded}
 
@@ -815,7 +815,7 @@ From each sample, two Cumulative Link Mixed Models (CLMM) were fitted \autocite[
 
 This is, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant.
 
-For each random sample, we adjusted the number of participants per country (in this case, \emph{n} = 30) to achieve the target statistical power of at least \(1 - \beta = 0.95\) for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of instrumentation, participant country and music country).
+For each random sample, we adjusted the number of participants per country (in this case, \emph{n} = 24) to achieve the target statistical power of at least \(1 - \beta = 0.95\) for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of instrumentation, participant country and music country).
 
 \hypertarget{select-random-samples}{%
 \subsection{Select random samples}\label{select-random-samples}}
@@ -949,7 +949,7 @@ Here, using a randomly selected sample, we fit one model as if it was the data c
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{set.seed}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)}
 \CommentTok{\# Select a random sample}
 \NormalTok{ex.data }\OtherTok{\textless{}{-}}\NormalTok{ samples.clmm.long  }\SpecialCharTok{|\textgreater{}} 
   \FunctionTok{filter}\NormalTok{(sample.clmm }\SpecialCharTok{==} \FunctionTok{sample}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_sims.clmm, }\DecValTok{1}\NormalTok{, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{|\textgreater{}} 
@@ -1012,7 +1012,7 @@ As pointed out in a comment by \textcite{532079}, author of the \texttt{emmeans}
 \CommentTok{\# Fit Density model}
 \FunctionTok{options}\NormalTok{(}\AttributeTok{contrasts =} \FunctionTok{c}\NormalTok{(}\StringTok{"contr.sum"}\NormalTok{,}\StringTok{"contr.poly"}\NormalTok{))}
 \NormalTok{model.den }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Density.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo }\SpecialCharTok{*}\NormalTok{ Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+} 
-\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ Participant),}
+\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ Tempo }\SpecialCharTok{|}\NormalTok{ Participant),}
                   \AttributeTok{data =}\NormalTok{ ex.data)}
 
 \CommentTok{\# Summary table}
@@ -1032,49 +1032,49 @@ Effects & Estimate & Std. Error & $z$ & $p$\\
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textbf{Thresholds}}\\
 \hline
-\hspace{1em}1|2 & -2.09 & 0.19 & -10.75 & \textbf{< 0.0001}\\
-\hspace{1em}2|3 & -0.48 & 0.15 & -3.16 & \textbf{0.0016}\\
-\hspace{1em}3|4 & 1.23 & 0.16 & 7.66 & \textbf{< 0.0001}\\
-\hspace{1em}4|5 & 3.38 & 0.26 & 13.02 & \textbf{< 0.0001}\\
+\hspace{1em}1|2 & -1.87 & 0.22 & -8.39 & \textbf{< 0.0001}\\
+\hspace{1em}2|3 & -0.36 & 0.19 & -1.88 & 0.06\\
+\hspace{1em}3|4 & 1.72 & 0.21 & 8.38 & \textbf{< 0.0001}\\
+\hspace{1em}4|5 & 3.77 & 0.31 & 12.32 & \textbf{< 0.0001}\\
 \addlinespace[0.3em]
 \hline
 \multicolumn{5}{l}{\textbf{Terms}}\\
 \hline
-\hspace{1em}Tempo [Low] & -0.52 & 0.10 & -5.00 & \textbf{< 0.0001}\\
-\hspace{1em}Instrumentation [Group] & 0.94 & 0.11 & 8.28 & \textbf{< 0.0001}\\
-\hspace{1em}Participant country [Canada] & 0.28 & 0.19 & 1.47 & 0.14\\
-\hspace{1em}Participant country [Iran] & -0.36 & 0.17 & -2.08 & \textbf{0.0375}\\
-\hspace{1em}Music country [Canada] & 0.09 & 0.14 & 0.65 & 0.51\\
-\hspace{1em}Music country [Iran] & 0.17 & 0.14 & 1.20 & 0.23\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] & 0.30 & 0.10 & 2.93 & \textbf{0.0033}\\
-\hspace{1em}Tempo [Low] × Participant country [Canada] & 0.04 & 0.15 & 0.26 & 0.8\\
-\hspace{1em}Tempo [Low] × Participant country [Iran] & -0.09 & 0.14 & -0.69 & 0.49\\
-\hspace{1em}Instrumentation [Group] × Participant country [Canada] & -0.45 & 0.15 & -2.95 & \textbf{0.0032}\\
-\hspace{1em}Instrumentation [Group] × Participant country [Iran] & 0.37 & 0.14 & 2.71 & \textbf{0.0068}\\
-\hspace{1em}Tempo [Low] × Music country [Canada] & -0.01 & 0.14 & -0.07 & 0.95\\
-\hspace{1em}Tempo [Low] × Music country [Iran] & 0.06 & 0.14 & 0.44 & 0.66\\
-\hspace{1em}Instrumentation [Group] × Music country [Canada] & 0.10 & 0.14 & 0.70 & 0.48\\
-\hspace{1em}Instrumentation [Group] × Music country [Iran] & 0.05 & 0.14 & 0.37 & 0.71\\
-\hspace{1em}Participant country [Canada] × Music country [Canada] & -0.20 & 0.22 & -0.94 & 0.35\\
-\hspace{1em}Participant country [Iran] × Music country [Canada] & -0.04 & 0.19 & -0.21 & 0.83\\
-\hspace{1em}Participant country [Canada] × Music country [Iran] & 0.23 & 0.21 & 1.09 & 0.27\\
-\hspace{1em}Participant country [Iran] × Music country [Iran] & -0.07 & 0.19 & -0.35 & 0.73\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] & -0.15 & 0.15 & -1.02 & 0.31\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] & 0.01 & 0.14 & 0.05 & 0.96\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Canada] & -0.06 & 0.14 & -0.45 & 0.65\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Iran] & -0.09 & 0.14 & -0.64 & 0.52\\
-\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Canada] & -0.12 & 0.22 & -0.55 & 0.59\\
-\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Canada] & -0.07 & 0.19 & -0.36 & 0.72\\
-\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Iran] & -0.21 & 0.21 & -0.99 & 0.32\\
-\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Iran] & -0.10 & 0.19 & -0.53 & 0.59\\
-\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.17 & 0.22 & -0.80 & 0.42\\
-\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & 0.04 & 0.19 & 0.19 & 0.85\\
-\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & -0.02 & 0.21 & -0.11 & 0.92\\
-\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & 0.05 & 0.19 & 0.27 & 0.79\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & 0.33 & 0.22 & 1.51 & 0.13\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & -0.02 & 0.19 & -0.09 & 0.93\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & -0.59 & 0.21 & -2.73 & \textbf{0.0063}\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & 0.11 & 0.19 & 0.57 & 0.57\\
+\hspace{1em}Tempo [Low] & -0.48 & 0.13 & -3.80 & \textbf{< 0.001}\\
+\hspace{1em}Instrumentation [Group] & 1.53 & 0.15 & 10.20 & \textbf{< 0.0001}\\
+\hspace{1em}Participant country [Canada] & 0.51 & 0.20 & 2.57 & \textbf{0.0101}\\
+\hspace{1em}Participant country [Iran] & -0.39 & 0.22 & -1.72 & 0.08\\
+\hspace{1em}Music country [Canada] & 0.00 & 0.17 & -0.02 & 0.98\\
+\hspace{1em}Music country [Iran] & 0.19 & 0.17 & 1.14 & 0.25\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] & 0.12 & 0.12 & 1.00 & 0.32\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] & 0.12 & 0.16 & 0.74 & 0.46\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] & -0.18 & 0.18 & -1.01 & 0.31\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] & -0.51 & 0.15 & -3.30 & \textbf{< 0.001}\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] & 0.04 & 0.18 & 0.24 & 0.81\\
+\hspace{1em}Tempo [Low] × Music country [Canada] & 0.01 & 0.17 & 0.04 & 0.96\\
+\hspace{1em}Tempo [Low] × Music country [Iran] & 0.04 & 0.17 & 0.26 & 0.8\\
+\hspace{1em}Instrumentation [Group] × Music country [Canada] & 0.21 & 0.17 & 1.25 & 0.21\\
+\hspace{1em}Instrumentation [Group] × Music country [Iran] & -0.25 & 0.17 & -1.51 & 0.13\\
+\hspace{1em}Participant country [Canada] × Music country [Canada] & -0.25 & 0.21 & -1.17 & 0.24\\
+\hspace{1em}Participant country [Iran] × Music country [Canada] & 0.29 & 0.24 & 1.19 & 0.24\\
+\hspace{1em}Participant country [Canada] × Music country [Iran] & 0.36 & 0.22 & 1.66 & 0.1\\
+\hspace{1em}Participant country [Iran] × Music country [Iran] & -0.44 & 0.25 & -1.78 & 0.08\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] & 0.01 & 0.15 & 0.07 & 0.94\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] & 0.34 & 0.18 & 1.96 & 0.05\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Canada] & 0.05 & 0.17 & 0.33 & 0.74\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Iran] & -0.08 & 0.17 & -0.46 & 0.65\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Canada] & -0.13 & 0.21 & -0.63 & 0.53\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Canada] & 0.24 & 0.24 & 0.99 & 0.32\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Iran] & -0.01 & 0.22 & -0.04 & 0.97\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Iran] & 0.20 & 0.25 & 0.82 & 0.41\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & 0.20 & 0.21 & 0.96 & 0.34\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & -0.42 & 0.24 & -1.73 & 0.08\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & -0.25 & 0.22 & -1.15 & 0.25\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & 0.26 & 0.25 & 1.05 & 0.29\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & 0.02 & 0.21 & 0.10 & 0.92\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & 0.19 & 0.24 & 0.80 & 0.43\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & 0.12 & 0.22 & 0.57 & 0.57\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & -0.11 & 0.25 & -0.46 & 0.65\\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -1087,7 +1087,7 @@ Effects & Estimate & Std. Error & $z$ & $p$\\
 \CommentTok{\# Fit Arousal model}
 \FunctionTok{options}\NormalTok{(}\AttributeTok{contrasts =} \FunctionTok{c}\NormalTok{(}\StringTok{"contr.sum"}\NormalTok{,}\StringTok{"contr.poly"}\NormalTok{))}
 \NormalTok{model.aro }\OtherTok{\textless{}{-}} \FunctionTok{clmm}\NormalTok{(Arousal.tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Tempo }\SpecialCharTok{*}\NormalTok{ Solo.group }\SpecialCharTok{*}\NormalTok{ Participant.country }\SpecialCharTok{*}\NormalTok{ Music.country }\SpecialCharTok{+} 
-\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{|}\NormalTok{ Participant),}
+\NormalTok{                    (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ Tempo }\SpecialCharTok{|}\NormalTok{ Participant),}
                   \AttributeTok{data =}\NormalTok{ ex.data)}
 
 \CommentTok{\# Summary table}
@@ -1107,49 +1107,49 @@ Effects & Estimate & Std. Error & $z$ & $p$\\
 \addlinespace[0.3em]
 \multicolumn{5}{l}{\textbf{Thresholds}}\\
 \hline
-\hspace{1em}1|2 & -2.00 & 0.20 & -9.79 & \textbf{< 0.0001}\\
-\hspace{1em}2|3 & -0.28 & 0.18 & -1.58 & 0.11\\
-\hspace{1em}3|4 & 2.35 & 0.22 & 10.45 & \textbf{< 0.0001}\\
-\hspace{1em}4|5 & 4.14 & 0.31 & 13.24 & \textbf{< 0.0001}\\
+\hspace{1em}1|2 & -2.02 & 0.20 & -9.88 & \textbf{< 0.0001}\\
+\hspace{1em}2|3 & -0.27 & 0.17 & -1.63 & 0.1\\
+\hspace{1em}3|4 & 2.08 & 0.21 & 9.80 & \textbf{< 0.0001}\\
+\hspace{1em}4|5 & 3.46 & 0.29 & 12.03 & \textbf{< 0.0001}\\
 \addlinespace[0.3em]
 \hline
 \multicolumn{5}{l}{\textbf{Terms}}\\
 \hline
-\hspace{1em}Tempo [Low] & -0.37 & 0.10 & -3.58 & \textbf{< 0.001}\\
-\hspace{1em}Instrumentation [Group] & 1.60 & 0.14 & 11.58 & \textbf{< 0.0001}\\
-\hspace{1em}Participant country [Canada] & -0.30 & 0.22 & -1.32 & 0.19\\
-\hspace{1em}Participant country [Iran] & 0.04 & 0.20 & 0.18 & 0.85\\
-\hspace{1em}Music country [Canada] & -0.09 & 0.15 & -0.62 & 0.54\\
-\hspace{1em}Music country [Iran] & -0.13 & 0.15 & -0.88 & 0.38\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] & 0.05 & 0.10 & 0.46 & 0.64\\
-\hspace{1em}Tempo [Low] × Participant country [Canada] & -0.04 & 0.15 & -0.28 & 0.78\\
-\hspace{1em}Tempo [Low] × Participant country [Iran] & 0.01 & 0.14 & 0.05 & 0.96\\
-\hspace{1em}Instrumentation [Group] × Participant country [Canada] & -0.17 & 0.15 & -1.09 & 0.28\\
-\hspace{1em}Instrumentation [Group] × Participant country [Iran] & -0.04 & 0.14 & -0.28 & 0.78\\
-\hspace{1em}Tempo [Low] × Music country [Canada] & -0.09 & 0.15 & -0.62 & 0.53\\
-\hspace{1em}Tempo [Low] × Music country [Iran] & -0.12 & 0.15 & -0.82 & 0.41\\
-\hspace{1em}Instrumentation [Group] × Music country [Canada] & 0.04 & 0.15 & 0.26 & 0.79\\
-\hspace{1em}Instrumentation [Group] × Music country [Iran] & 0.02 & 0.15 & 0.14 & 0.89\\
-\hspace{1em}Participant country [Canada] × Music country [Canada] & 0.37 & 0.22 & 1.68 & 0.09\\
-\hspace{1em}Participant country [Iran] × Music country [Canada] & -0.33 & 0.20 & -1.68 & 0.09\\
-\hspace{1em}Participant country [Canada] × Music country [Iran] & -0.23 & 0.22 & -1.07 & 0.29\\
-\hspace{1em}Participant country [Iran] × Music country [Iran] & 0.09 & 0.19 & 0.48 & 0.63\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] & -0.22 & 0.15 & -1.44 & 0.15\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] & 0.03 & 0.14 & 0.23 & 0.82\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Canada] & 0.23 & 0.15 & 1.58 & 0.11\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Iran] & -0.39 & 0.15 & -2.67 & \textbf{0.0076}\\
-\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Canada] & -0.14 & 0.22 & -0.63 & 0.53\\
-\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Canada] & -0.09 & 0.20 & -0.47 & 0.64\\
-\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Iran] & 0.10 & 0.22 & 0.44 & 0.66\\
-\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Iran] & 0.11 & 0.19 & 0.58 & 0.56\\
-\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & 0.42 & 0.22 & 1.90 & 0.06\\
-\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & -0.21 & 0.20 & -1.04 & 0.3\\
-\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & -0.09 & 0.22 & -0.42 & 0.67\\
-\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & 0.11 & 0.19 & 0.58 & 0.56\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.03 & 0.22 & -0.15 & 0.88\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & -0.44 & 0.20 & -2.24 & \textbf{0.0251}\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & 0.24 & 0.22 & 1.09 & 0.28\\
-\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & 0.42 & 0.20 & 2.14 & \textbf{0.0324}\\
+\hspace{1em}Tempo [Low] & -0.62 & 0.13 & -4.84 & \textbf{< 0.0001}\\
+\hspace{1em}Instrumentation [Group] & 1.36 & 0.14 & 9.48 & \textbf{< 0.0001}\\
+\hspace{1em}Participant country [Canada] & -0.17 & 0.18 & -0.95 & 0.34\\
+\hspace{1em}Participant country [Iran] & -0.03 & 0.20 & -0.16 & 0.87\\
+\hspace{1em}Music country [Canada] & -0.13 & 0.16 & -0.82 & 0.41\\
+\hspace{1em}Music country [Iran] & 0.05 & 0.17 & 0.28 & 0.78\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] & 0.10 & 0.12 & 0.82 & 0.41\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] & 0.24 & 0.16 & 1.49 & 0.14\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] & -0.03 & 0.18 & -0.17 & 0.87\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] & -0.24 & 0.15 & -1.59 & 0.11\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] & 0.10 & 0.17 & 0.58 & 0.56\\
+\hspace{1em}Tempo [Low] × Music country [Canada] & -0.08 & 0.16 & -0.51 & 0.61\\
+\hspace{1em}Tempo [Low] × Music country [Iran] & 0.22 & 0.17 & 1.34 & 0.18\\
+\hspace{1em}Instrumentation [Group] × Music country [Canada] & -0.09 & 0.16 & -0.56 & 0.58\\
+\hspace{1em}Instrumentation [Group] × Music country [Iran] & 0.01 & 0.17 & 0.07 & 0.95\\
+\hspace{1em}Participant country [Canada] × Music country [Canada] & 0.15 & 0.21 & 0.70 & 0.49\\
+\hspace{1em}Participant country [Iran] × Music country [Canada] & -0.09 & 0.24 & -0.37 & 0.71\\
+\hspace{1em}Participant country [Canada] × Music country [Iran] & -0.03 & 0.21 & -0.15 & 0.88\\
+\hspace{1em}Participant country [Iran] × Music country [Iran] & 0.15 & 0.24 & 0.61 & 0.54\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] & 0.06 & 0.15 & 0.41 & 0.68\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] & 0.05 & 0.17 & 0.28 & 0.78\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Canada] & -0.04 & 0.16 & -0.27 & 0.79\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Music country [Iran] & 0.32 & 0.17 & 1.91 & 0.06\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Canada] & -0.10 & 0.21 & -0.47 & 0.64\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Canada] & 0.02 & 0.24 & 0.09 & 0.93\\
+\hspace{1em}Tempo [Low] × Participant country [Canada] × Music country [Iran] & 0.15 & 0.21 & 0.72 & 0.47\\
+\hspace{1em}Tempo [Low] × Participant country [Iran] × Music country [Iran] & 0.16 & 0.24 & 0.67 & 0.5\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.23 & 0.21 & -1.08 & 0.28\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & 0.19 & 0.24 & 0.79 & 0.43\\
+\hspace{1em}Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & -0.23 & 0.21 & -1.09 & 0.28\\
+\hspace{1em}Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & 0.13 & 0.24 & 0.54 & 0.59\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Canada] & -0.26 & 0.21 & -1.22 & 0.22\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Canada] & 0.14 & 0.24 & 0.57 & 0.57\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Canada] × Music country [Iran] & -0.06 & 0.21 & -0.27 & 0.79\\
+\hspace{1em}Tempo [Low] × Instrumentation [Group] × Participant country [Iran] × Music country [Iran] & -0.15 & 0.24 & -0.61 & 0.54\\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -1209,8 +1209,8 @@ Table of estimated marginal means and contrasts between tempo conditions. All es
 \cmidrule(l{3pt}r{3pt}){6-10}
 Tempo & EMM & $SE$ & $2.5\% CI$ & $97.5\% CI$ & Contrast & Difference & $SE$ & $z$ & $p$\\
 \midrule
-Low & -1.03 & 0.17 & -1.37 & -0.69 & Low - High & -1.05 & 0.21 & -5 & \textbf{< 0.0001}\\
-High & 0.02 & 0.17 & -0.31 & 0.35 &  &  &  &  & \\
+Low & -1.29 & 0.20 & -1.68 & -0.91 & Low - High & -0.95 & 0.25 & -3.8 & \textbf{< 0.001}\\
+High & -0.34 & 0.21 & -0.75 & 0.07 &  &  &  &  & \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[para]
@@ -1256,8 +1256,8 @@ Table of estimated marginal means and contrasts between tempo conditions. All es
 \cmidrule(l{3pt}r{3pt}){6-10}
 Tempo & EMM & $SE$ & $2.5\% CI$ & $97.5\% CI$ & Contrast & Difference & $SE$ & $z$ & $p$\\
 \midrule
-Low & -1.42 & 0.20 & -1.81 & -1.04 & Low - High & -0.74 & 0.21 & -3.58 & \textbf{< 0.001}\\
-High & -0.68 & 0.19 & -1.05 & -0.32 &  &  &  &  & \\
+Low & -1.43 & 0.22 & -1.86 & -1.00 & Low - High & -1.25 & 0.26 & -4.84 & \textbf{< 0.0001}\\
+High & -0.19 & 0.16 & -0.51 & 0.14 &  &  &  &  & \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}[para]
@@ -1284,7 +1284,7 @@ Figure of estimated marginal means and contrasts between tempo conditions.
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
 
-Based on the conducted power analysis (section \ref{power-section}), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power (\(1 - \beta\)) greater than 0.95 for the \emph{post-hoc} contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
+Based on the conducted power analysis (section \ref{power-section}), it can be inferred that a sample size of 30 participants per country (90 participants in total) would yield a statistical power (\(1 - \beta\)) greater than 0.95 for the planned contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
 
 In addition, as shown when fitting and reporting the models with a randomly selected sample (section \ref{example-data}), the sample size and data structure are adequate to fit the planned models.
 
@@ -1319,10 +1319,10 @@ In addition, as shown when fitting and reporting the models with a randomly sele
 \emph{stats}, \emph{graphics}, \emph{grDevices}, \emph{utils}, \emph{datasets}, \emph{methods} and \emph{base}
 
 \textbf{other attached packages:}
-\emph{pander(v.0.6.5)}, \emph{beepr(v.1.3)}, \emph{scales(v.1.2.1)}, \emph{performance(v.0.10.4)}, \emph{kableExtra(v.1.3.4)}, \emph{ordinal(v.2022.11-16)}, \emph{emmeans(v.1.8.6)}, \emph{ggpubr(v.0.6.0)}, \emph{lubridate(v.1.9.2)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.0)}, \emph{dplyr(v.1.1.2)}, \emph{purrr(v.1.0.1)}, \emph{readr(v.2.1.4)}, \emph{tidyr(v.1.3.0)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.4.2)}, \emph{tidyverse(v.2.0.0)} and \emph{knitr(v.1.43)}
+\emph{pander(v.0.6.5)}, \emph{beepr(v.1.3)}, \emph{scales(v.1.2.1)}, \emph{performance(v.0.10.4)}, \emph{kableExtra(v.1.3.4)}, \emph{ordinal(v.2022.11-16)}, \emph{emmeans(v.1.8.8)}, \emph{ggpubr(v.0.6.0)}, \emph{lubridate(v.1.9.2)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.0)}, \emph{dplyr(v.1.1.2)}, \emph{purrr(v.1.0.2)}, \emph{readr(v.2.1.4)}, \emph{tidyr(v.1.3.0)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.4.3)}, \emph{tidyverse(v.2.0.0)} and \emph{knitr(v.1.43)}
 
 \textbf{loaded via a namespace (and not attached):}
-\emph{gtable(v.0.3.3)}, \emph{xfun(v.0.39)}, \emph{insight(v.0.19.2)}, \emph{rstatix(v.0.7.2)}, \emph{lattice(v.0.21-8)}, \emph{tzdb(v.0.4.0)}, \emph{numDeriv(v.2016.8-1.1)}, \emph{vctrs(v.0.6.3)}, \emph{tools(v.4.3.1)}, \emph{generics(v.0.1.3)}, \emph{fansi(v.1.0.4)}, \emph{highr(v.0.10)}, \emph{ucminf(v.1.2.0)}, \emph{pkgconfig(v.2.0.3)}, \emph{Matrix(v.1.5-4.1)}, \emph{webshot(v.0.5.4)}, \emph{lifecycle(v.1.0.3)}, \emph{farver(v.2.1.1)}, \emph{compiler(v.4.3.1)}, \emph{tinytex(v.0.45)}, \emph{munsell(v.0.5.0)}, \emph{carData(v.3.0-5)}, \emph{htmltools(v.0.5.5)}, \emph{yaml(v.2.3.7)}, \emph{pillar(v.1.9.0)}, \emph{car(v.3.1-2)}, \emph{MASS(v.7.3-60)}, \emph{abind(v.1.4-5)}, \emph{nlme(v.3.1-162)}, \emph{tidyselect(v.1.2.0)}, \emph{rvest(v.1.0.3)}, \emph{digest(v.0.6.31)}, \emph{mvtnorm(v.1.2-2)}, \emph{stringi(v.1.7.12)}, \emph{bookdown(v.0.34)}, \emph{labeling(v.0.4.2)}, \emph{cowplot(v.1.1.1)}, \emph{fastmap(v.1.1.1)}, \emph{grid(v.4.3.1)}, \emph{colorspace(v.2.1-0)}, \emph{cli(v.3.6.1)}, \emph{magrittr(v.2.0.3)}, \emph{utf8(v.1.2.3)}, \emph{broom(v.1.0.5)}, \emph{withr(v.2.5.0)}, \emph{backports(v.1.4.1)}, \emph{timechange(v.0.2.0)}, \emph{estimability(v.1.4.1)}, \emph{rmarkdown(v.2.22)}, \emph{httr(v.1.4.6)}, \emph{audio(v.0.1-10)}, \emph{gridExtra(v.2.3)}, \emph{ggsignif(v.0.6.4)}, \emph{hms(v.1.1.3)}, \emph{evaluate(v.0.21)}, \emph{viridisLite(v.0.4.2)}, \emph{rlang(v.1.1.1)}, \emph{Rcpp(v.1.0.10)}, \emph{xtable(v.1.8-4)}, \emph{glue(v.1.6.2)}, \emph{xml2(v.1.3.4)}, \emph{svglite(v.2.1.1)}, \emph{rstudioapi(v.0.14)}, \emph{R6(v.2.5.1)} and \emph{systemfonts(v.1.0.4)}
+\emph{tidyselect(v.1.2.0)}, \emph{viridisLite(v.0.4.2)}, \emph{farver(v.2.1.1)}, \emph{fastmap(v.1.1.1)}, \emph{TH.data(v.1.1-2)}, \emph{digest(v.0.6.33)}, \emph{estimability(v.1.4.1)}, \emph{timechange(v.0.2.0)}, \emph{lifecycle(v.1.0.3)}, \emph{survival(v.3.5-7)}, \emph{magrittr(v.2.0.3)}, \emph{compiler(v.4.3.1)}, \emph{rlang(v.1.1.1)}, \emph{tools(v.4.3.1)}, \emph{utf8(v.1.2.3)}, \emph{yaml(v.2.3.7)}, \emph{ggsignif(v.0.6.4)}, \emph{labeling(v.0.4.2)}, \emph{xml2(v.1.3.5)}, \emph{multcomp(v.1.4-25)}, \emph{abind(v.1.4-5)}, \emph{withr(v.2.5.0)}, \emph{numDeriv(v.2016.8-1.1)}, \emph{grid(v.4.3.1)}, \emph{fansi(v.1.0.4)}, \emph{xtable(v.1.8-4)}, \emph{colorspace(v.2.1-0)}, \emph{MASS(v.7.3-60)}, \emph{tinytex(v.0.46)}, \emph{insight(v.0.19.3)}, \emph{cli(v.3.6.1)}, \emph{mvtnorm(v.1.2-2)}, \emph{rmarkdown(v.2.24)}, \emph{generics(v.0.1.3)}, \emph{rstudioapi(v.0.15.0)}, \emph{httr(v.1.4.7)}, \emph{tzdb(v.0.4.0)}, \emph{audio(v.0.1-11)}, \emph{splines(v.4.3.1)}, \emph{rvest(v.1.0.3)}, \emph{vctrs(v.0.6.3)}, \emph{webshot(v.0.5.5)}, \emph{Matrix(v.1.6-1)}, \emph{sandwich(v.3.0-2)}, \emph{carData(v.3.0-5)}, \emph{bookdown(v.0.35)}, \emph{car(v.3.1-2)}, \emph{hms(v.1.1.3)}, \emph{rstatix(v.0.7.2)}, \emph{systemfonts(v.1.0.4)}, \emph{glue(v.1.6.2)}, \emph{codetools(v.0.2-19)}, \emph{cowplot(v.1.1.1)}, \emph{stringi(v.1.7.12)}, \emph{gtable(v.0.3.3)}, \emph{munsell(v.0.5.0)}, \emph{pillar(v.1.9.0)}, \emph{htmltools(v.0.5.6)}, \emph{R6(v.2.5.1)}, \emph{ucminf(v.1.2.0)}, \emph{evaluate(v.0.21)}, \emph{lattice(v.0.21-8)}, \emph{highr(v.0.10)}, \emph{backports(v.1.4.1)}, \emph{broom(v.1.0.5)}, \emph{Rcpp(v.1.0.11)}, \emph{svglite(v.2.1.1)}, \emph{gridExtra(v.2.3)}, \emph{nlme(v.3.1-163)}, \emph{xfun(v.0.40)}, \emph{zoo(v.1.8-12)} and \emph{pkgconfig(v.2.0.3)}
 
 \printbibliography
 
