@@ -91,7 +91,7 @@ PES: \href{mailto:psavage@sfc.keio.ac.jp}{psavage@sfc.keio.ac.jp}.
 ------------------------------------------------------------------------
 
 ```{=tex}
-\textbf{Descripción}
+\textbf{Description}
 \end{center}
 
 \par
