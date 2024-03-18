@@ -1,0 +1,956 @@
+---
+title: 'Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan [Stage 1 Registered Report]'
+subtitle: 'Code and analyses: Simulation-based power analysis'
+author:
+  - name: Shafagh Hadavi \orcidlink{0009-0008-1184-7238}
+    correspondence: false
+    institute: keiko
+  - name: Junji Kuroda
+    correspondence: false
+    institute: yamaha
+  - name: Taiki Shimozono
+    correspondence: false
+    institute: yamaha
+  - name: Juan David Leongómez \orcidlink{0000-0002-0092-6298}
+    correspondence: false
+    institute: ueb
+  - name: Patrick E. Savage \orcidlink{0000-0001-6996-7496}
+    correspondence: false
+    institute: keiko
+institute:
+  - keiko: Graduate School of Media and Policy / Faculty of Environment and Information Studies, Keio University, Fujisawa, Japan.
+  - yamaha: YAMAHA Corporation, Hamamatsu, Japan.
+  - ueb: Human Behaviour and Evolution Lab, Faculty of Psychology, Universidad El Bosque, Bogota, Colombia.
+date: "`r Sys.setlocale('LC_TIME','English');format(Sys.Date(),'%d %B, %Y')`"
+output:
+  bookdown::pdf_document2:
+    citation_package: biblatex
+    highlight: zenburn
+    number_sections: yes
+    keep_tex:  true
+    toc: no
+    pandoc_args:
+      - '--lua-filter=lua/scholarly-metadata.lua'
+      - '--lua-filter=lua/author-info-blocks.lua'
+classoption: 
+      - bookmarksnumbered
+editor_options:
+  chunk_output_type: console
+geometry: margin=2cm
+header-includes: 
+  \usepackage{caption} 
+  \usepackage{float} 
+  \floatplacement{figure}{H} 
+  \usepackage[utf8]{inputenc} 
+  \usepackage{fancyhdr}
+  \pagestyle{fancy} 
+  \usepackage{hanging}
+  \usepackage{csquotes}
+  \usepackage[style=apa,backend=biber]{biblatex}
+  \lhead{Hadavi et al.} 
+  \rhead{\textit{Power analysis}} 
+  \renewcommand{\abstractname}{Description} 
+  \usepackage{multicol}
+  \usepackage{orcidlink}
+  \newcommand{\opensupplement}{\setcounter{table}{0}
+    \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0}
+    \renewcommand{\thefigure}{S\arabic{figure}}}
+  \newcommand{\closesupplement}{\setcounter{table}{0}
+    \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0}
+    \renewcommand{\thefigure}{\arabic{figure}}}
+  \usepackage{multirow,booktabs,setspace}
+  \DeclareCaptionLabelSeparator{point}{. }
+  \DeclareCaptionLabelSeparator{point}{. }
+  \captionsetup[table]{labelfont=bf,
+    textfont=it,
+    format=plain,
+    labelsep=point,
+    skip=5pt}
+  \captionsetup[figure]{labelfont=bf,
+    format=plain,
+    justification=justified,
+    singlelinecheck=false,
+    labelsep=point,
+    skip=5pt}
+always_allow_html: yes
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
+bibliography: Bib/Bibliography.bib
+urlcolor: blue
+citecolor: gray
+linkcolot: gray
+link-citations: true
+---
+
+```{=tex}
+\begin{center}
+Correspondence to:
+SH: \href{mailto:shafagh@keio.jp}{shafagh@keio.jp}. 
+PES: \href{mailto:psavage@sfc.keio.ac.jp}{psavage@sfc.keio.ac.jp}.
+```
+
+------------------------------------------------------------------------
+
+```{=tex}
+\textbf{Description}
+\end{center}
+
+\par
+\begingroup
+\leftskip3em
+\rightskip\leftskip
+```
+
+This document contains all code, and step by step explanations for the simulation-based power analysis (including supplementary figures and tables) for:
+
+```{=latex}
+\begin{hangparas}{.25in}{1}
+Hadavi, S., Kuroda, J., Shimozono, T., Leongómez, J. D., \& Savage, P. E. (in prep). \textit{Cross-cultural relationships between music, emotion, and visual imagery: A comparative study of Iran, Canada, and Japan} [Stage 1 Registered Report]. \url{https://doi.org/10.31234/osf.io/26yg5}
+\end{hangparas}
+```
+
+Data available from the *VisualEars* repository in GitHub: <https://github.com/comp-music-lab/VisualEars>. This document and its underlying code were created in `R Markdown` by Juan David Leongómez using \LaTeX.
+
+------------------------------------------------------------------------
+
+```{=latex}
+\par
+\endgroup
+
+{\hypersetup{hidelinks}
+\setcounter{tocdepth}{6}
+\tableofcontents
+}
+\opensupplement
+```
+
+```{r results = "hold", setup, include = FALSE}
+library(knitr)
+opts_chunk$set(fig.width = 12, fig.height = 6, fig.pos = "H")
+options(knitr.kable.NA = " ")
+opts_knit$set(eval.after = "fig.cap")
+set.seed(1)
+```
+
+------------------------------------------------------------------------
+ 
+# Power analysis strategy
+
+Our power analysis utilizes Monte Carlo simulations to account for the characteristics of our study data and the statistical model we are using. We employ Cumulative Link Mixed Models (CLMM) due to the nature of our dependent variables, which are based on 5-point Likert scales rather than normally distributed continuous data. Additionally, the paired responses from each participant are not independent of one another.
+
+While analytical power analysis can be conducted for certain statistical tests involving a single independent variable, such as correlation, simple regression, t-tests, and one-way ANOVA, more complex models and factorial designs require a simulation-based approach [e.g., @lakensSimulationBasedPowerAnalysis2021].
+
+In this approach, a statistical model is defined with a specific effect size of interest. Multiple synthetic datasets are generated based on this model, and the proportion of datasets resulting in significant results (i.e., rejecting the null hypothesis with $p < \alpha$) is computed ($\alpha = 0.025$ after applying Bonferroni correction). This proportion represents the Monte Carlo estimate of the test's power to detect the desired effect size.
+
+To perform our analysis, we simulated a population of 10,000 participants, each providing 6 paired responses, resulting in a total of 120,000 ratings for both visual density and arousal. From this simulated population, we randomly selected 1,000 samples. The sample size for each was adjusted until we achieved the desired statistical power. For each sample, we fitted models to assess both arousal and visual density ratings, incorporating fixed effects for Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and music country (Iran, Canada, Japan), along with their interactions. Random intercepts and slopes between Tempo conditions were included for each participant to ensure a fair representation of the experimental design [@barrRandomEffectsStructure2013; @debruineUnderstandingMixedEffectsModels2021].
+
+However, since our hypotheses focus solely on the effects of manipulating tempo, the power analysis primarily examines the planned contrast between Tempo conditions, independent of instrumentation, participant country, and music country levels.
+
+# Preliminaries
+
+## Load packages
+
+This file was created using `knitr` [@knitrcit], mostly using `tidyverse` [@tidyversecit] syntax. As such, data wrangling was mainly done using packages such as `dplyr` [@dplyrcit], and most figures were created using `ggplot2` [@ggplotcit]. Tables were created using `knitr::kable` and `kableExtra` [@kableExtracit].
+
+Cumulative Link Mixed Models (CLMM) were fitted using `ordinal` [@ordinalcit], and contrasts and interactions were explored using `emmeans` [@emmeanscit]. In all cases, threshold between levels of the dependent (ordinal) variable, were set as flexible.
+
+All packages used in this file can be directly installed from the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)). For a complete list of packages used to create this file, and their versions, see section \@ref(session), at the end of the document.
+
+```{r message = FALSE}
+library(tidyverse)
+library(ggpubr)
+library(emmeans)
+library(ordinal)
+library(kableExtra)
+library(performance)
+library(scales)
+```
+
+## Custom functions
+
+### `clmm_generate_data`
+
+To simulate ordinal data with a specific distribution, we used the function `clmm_generate_data`, created by @bordersPowerAnalysisOrdinal2022 as part of their tutorial (https://osf.io/e6usd/). To run this function, a number of other custom functions need to be defined and implemented as well. The original code can be found in the `clmm-power-library.R` file (https://osf.io/tjpkf). Here, it is run from source, but in a slightly modified version of the file in which we changed the `mc.cores` parameter to 1, to avoid errors.
+
+```{r}
+source("clmm-power-library.R", local = knitr::knit_global())
+```
+
+### `pval.lev`
+
+The function `pval.lev` takes p-values and formats them in \LaTeX, highlighting significant results in bold.
+
+```{r}
+pval.lev <- function(pvals) {
+  ifelse(pvals < 0.0001,
+         "\\textbf{< 0.0001}",
+         ifelse(pvals < 0.001,
+                "\\textbf{< 0.001}",
+                ifelse(pvals < 0.05,
+                       paste0("\\textbf{", round(pvals, 4), "}"),
+                       round(pvals, 2))))
+}
+```
+
+### `summary.sig`
+
+The function `summary.sig` was created to bold significant *p* values from summary model tables. It highlights significant $p$ values, and formats the output in \LaTeX, ready to be used with `kable`.
+
+```{r}
+summary.sig <- function(mod, custom_caption) {
+  modTab <- data.frame(summary(mod)$coefficients) |>
+    rownames_to_column() |>
+    mutate_at("rowname", str_replace_all, ":", " × ") |>
+    mutate_at("rowname", str_replace_all, "`", "") |>
+    mutate("rowname" = str_replace_all(rowname,
+                                      c("Tempo1" = "Tempo [Low]",
+                                      "Solo.group1" = "Instrumentation [Group]",
+                                      "Participant.country1" = "Participant country [Canada]",
+                                      "Participant.country2" = "Participant country [Iran]",
+                                      "Music.country1" = "Music country [Canada]",
+                                      "Music.country2" = "Music country [Iran]"))) |> 
+      mutate(Pr...z.. = pval.lev(Pr...z..)) |> 
+      kable(digits = 2,
+            booktabs = TRUE,
+            align = c("l", rep("c", 4)),
+            linesep = "",
+            caption = custom_caption,
+            col.names = c("Effects",
+                          "Estimate", 
+                          "Std. Error", 
+                          "$z$", 
+                          "$p$"),
+            escape = FALSE) |> 
+    kable_styling(latex_options = c("HOLD_position", "scale_down")) |>
+    pack_rows(group_label = "Thresholds",
+              start_row = 1,
+              end_row = 4,
+              hline_after = TRUE,
+              bold = TRUE) |>
+    pack_rows(group_label = "Terms",
+              start_row = 5,
+              end_row = 39,
+              hline_before = TRUE,
+              hline_after = TRUE,
+              bold = TRUE)
+  return(modTab)
+}
+```
+
+### `contr.stars`
+
+Function to create a data frame of model contrasts, representing significance levels from an `emmeans::emmeans` output. These data frames are formatted to be called by the `ggpubr::stat_pvalue_manual` function used in model figures.
+
+```{r results = "hold"}
+contr.stars <- function(emms){
+  require(emmeans)
+  x <- tibble(as.data.frame(emms$contrasts))
+  x <- separate(x,
+                col = 1, 
+                into = c("group1", "group2"), 
+                sep = " - ", 
+                remove = TRUE)
+  x$p.signif <- ifelse(x$p.value < 0.0001, "****",
+                            ifelse(x$p.value < 0.001, "***",
+                                   ifelse(x$p.value < 0.01, "**",
+                                          ifelse(x$p.value < 0.05, "*", NA))))
+  x <- x |>
+    mutate_at("group1", str_replace_all, "[()]", "") |> 
+    mutate_at("group2", str_replace_all, "[()]", "")
+  return(x)
+}
+```
+
+### `tempo.contr`
+
+This functions creates a table combining both estimated marginal means and contrasts between levels of Tempo, and formats the output in \LaTeX, ready to be used with `kable`. 
+
+```{r}
+tempo.contr <- function(mod){
+  emms.mod <- emmeans(mod, pairwise~Tempo)
+  emms.mod.tab <- tibble(data.frame(emms.mod$emmeans))
+  t.mod <- contr.stars(emms.mod) |>
+    mutate(p.value = pval.lev(p.value))
+  emm.contr.tab <- merge(emms.mod.tab, t.mod, by = 0, all = TRUE) |>
+    select(-c(1,5,12,15)) |>
+    unite(Contrast, group1, group2, sep = " - ") |>
+    mutate_at("Contrast", str_replace_all, "NA - NA", " ") |>
+    kable(digits = 2,
+          booktabs = TRUE,
+          align = c("l", rep("c", 5), "l", rep("c", 5)),
+          linesep = "",
+          caption = "Estimated marginal means and contrasts between Tempo conditions",
+          col.names = c("Tempo",
+                        "EMM",
+                        "$SE$",
+                        "$2.5\\% CI$",
+                        "$97.5\\% CI$",
+                        "Contrast",
+                        "Difference",
+                        "$SE$",
+                        "$z$",
+                        "$p$"),
+          escape = FALSE) |>
+    add_header_above(c(" " = 5, "Contrasts" = 5)) |>
+    kable_styling(latex_options = c("HOLD_position")) |>
+    footnote(general = "EMM = estimated marginal mean.",
+             threeparttable = TRUE,
+             footnote_as_chunk = TRUE,
+             escape = FALSE)
+  return(emm.contr.tab)
+}
+```
+
+# Data
+
+## Pilot data
+
+To simulate data, first we looked at the distribution of the pilot data. 
+
+```{r message = FALSE, cache = TRUE, fig.height = 5, fig.cap = "Distribution of results from pilot data for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
+# Load data
+sh1 <- read.csv("../sh1.csv") |> 
+  mutate(Tempo = str_replace(Tempo, "low", "Low")) |> 
+  mutate(Tempo = str_replace(Tempo, "high", "High")) |> 
+  mutate_if(is.character,as.factor) |> 
+  mutate(Tempo = fct_relevel(Tempo, c("Low", "High")))
+
+# Assign unique id to pairs
+uniqueval <- unique(sh1[, c("Participant", "Music.country", "Solo.group")])
+sh1$groupid <- 0
+for (i in 1:dim(uniqueval)[1]) {
+  idx <- sh1$Participant == uniqueval$Participant[i] & 
+    sh1$Music.country == uniqueval$Music.country[i] & 
+    sh1$Solo.group == uniqueval$Solo.group[i]
+  sh1$groupid[idx] <- i
+}
+
+# Select only relevant variables
+data <- sh1  |> 
+  select(1:9,20)
+
+# Plot distribution of results for density ratings
+p1a <- ggplot(data, aes(x = density.tempo, y = after_stat(density),
+                       fill = Tempo, color = Tempo)) +
+  scale_fill_hue(direction = -1) + scale_colour_hue(direction = -1) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 1) +
+  labs(y= "Probability", x = "Rating", title = "Density") +
+  geom_text(aes(label = format(after_stat(density), digits = 1), y= after_stat(density)), 
+            stat= "bin", binwidth = 1, 
+            vjust = -0.2,
+            show.legend = FALSE) +
+  facet_wrap(~Solo.group)
+
+# Plot distribution of results for arousal ratings
+p1b <- ggplot(data, aes(x = arousal.tempo, y = after_stat(density),
+                       fill = Tempo, color = Tempo)) +
+  scale_fill_hue(direction = -1) + scale_colour_hue(direction = -1) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 1) +
+  labs(y= NULL, x = "Rating", title = "Arousal") +
+  geom_text(aes(label = format(after_stat(density), digits = 1), y= after_stat(density)), 
+            stat= "bin", binwidth = 1, 
+            vjust = -0.2,
+            show.legend = FALSE) +
+  facet_wrap(~Solo.group)
+
+# Arrange plots
+p1 <- ggarrange(p1a, p1b,
+                common.legend = TRUE,
+                legend = "bottom",
+                labels = "AUTO")
+p1
+```
+
+## Data simulation
+
+While basing a power analysis on pilot data is problematic and can bias the sample size estimation [see e.g., @albersWhenPowerAnalyses2018], we used this distribution as a starting point.
+
+The `clmm_generate_data` function [@bordersPowerAnalysisOrdinal2022] allows to simulate data with random and fixed effects with an ordinal outcome. In this case, we simulated data for Tempo, the within-subject variable for which there was an *a-priori* prediction, replicating the distribution of the first level (Low) using a specified probability of each rating score (using the argument `control_distribution`). The second level of that within-subject variable (Tempo = High) is generated based on a hypothesized effect (using the argument `effect`). Other important factors such as participant country and music country were randomly assigned, as there are no *a-priori* predictions regarding these factors.
+
+### Replication of the pilot data distribution
+
+To obtain distributions similar to the probabilities observed in the pilot data, we first simulated individual data for Density and Arousal ratings, separated by Instrumentation type (Group, Solo). In all cases, we simulated data from 10000 participants, and changed the value assigned to the `effect` argument until the distribution of the second level of the within-subject variable (Tempo = High) resembled the pilot data.
+
+```{r cache = TRUE}
+# Density ratings for group music
+dat.den.gr.PILOT <- clmm_generate_data(n_participants = 10000,
+                           n_trials = 3,
+                           control_distribution = c(.04, .11, .59, .22, .04),
+                           effect = 3.2,
+                           participant_variation = 1,
+                           within_subject = TRUE,
+                           control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Density.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Group", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+
+# Density ratings for solo music
+dat.den.so.PILOT <- clmm_generate_data(n_participants = 10000,
+                                 n_trials = 3,
+                                 control_distribution = c(.55, .30, .04, .10, .01),
+                                 effect = 1.2,
+                                 participant_variation = 1,
+                                 within_subject = TRUE,
+                                 control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Density.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Solo", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+
+# Arousal ratings for group music
+dat.aro.gr.PILOT <- clmm_generate_data(n_participants = 10000,
+                                 n_trials = 3,
+                                 control_distribution = c(.11, .11, .52, .19, .07),
+                                 effect = 3.1,
+                                 participant_variation = 1,
+                                 within_subject = TRUE,
+                                 control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Arousal.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Group", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+
+# Arousal ratings for solo music
+dat.aro.so.PILOT <- clmm_generate_data(n_participants = 10000,
+                                 n_trials = 3,
+                                 control_distribution = c(.43, .41, .14, .01, .01),
+                                 effect = 1.6,
+                                 participant_variation = 1,
+                                 within_subject = TRUE,
+                                 control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Arousal.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Solo", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+```
+
+We then merged these four data frames to obtain a simulated data frame.
+
+```{r cache = TRUE, message = FALSE}
+dat.sim.PILOT <- left_join(bind_rows(dat.den.gr.PILOT, dat.den.so.PILOT),
+                           bind_rows(dat.aro.gr.PILOT, dat.aro.so.PILOT),
+                           relationship = "many-to-many") |> 
+  mutate(Tempo = fct_relevel(Tempo, c("Low", "High")))
+```
+
+The distribution of this replication of the pilot data distribution is represented in \@ref(fig:pilot-rep)
+
+```{r pilot-rep, cache = TRUE, fig.height = 5, fig.cap = "Distribution of results from a simulated replication of the pilot data distribution for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
+# Plot distribution of results for density ratings
+p2a <- ggplot(dat.sim.PILOT, aes(x = Density.tempo, y = after_stat(density),
+                                 fill = Tempo, color = Tempo)) +
+  scale_fill_hue(direction = -1) + scale_colour_hue(direction = -1) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 1) +
+  labs(y= "Probability", x = "Rating") +
+  geom_text(aes(label = format(after_stat(density), digits = 1), y= after_stat(density)), 
+            stat= "bin", binwidth = 1, 
+            vjust = -0.2,
+            show.legend = FALSE) +
+  facet_wrap(~Solo.group)
+
+# Plot distribution of results for arousal ratings
+p2b <- ggplot(dat.sim.PILOT, aes(x = Arousal.tempo, y = after_stat(density),
+                                 fill = Tempo, color = Tempo)) +
+  scale_fill_hue(direction = -1) + scale_colour_hue(direction = -1) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 1) +
+  labs(y= NULL, x = "Rating") +
+  geom_text(aes(label = format(after_stat(density), digits = 1), y= after_stat(density)), 
+            stat= "bin", binwidth = 1, 
+            vjust = -0.2,
+            show.legend = FALSE) +
+  facet_wrap(~Solo.group)
+
+# Arrange plots
+p2 <- ggarrange(p2a +
+                  labs(subtitle = "Density"), 
+                p2b  +
+                  labs(subtitle = "Arousal"),
+                common.legend = TRUE,
+                legend = "bottom",
+                labels = "AUTO")
+p2
+```
+
+### Simulation of data with a more conservative effect
+
+While the data simulated in the previous section resembled the distribution of the pilot data, using these data would be problematic for at least two reasons:
+
+First, the effects of Tempo were extremely large (3.2, 1.2, 3.1, 1.6), particularly for ratings of Group instrumentation (3.2, and 3.1). With such differences, a very high statistical power of about $1 - \beta = 0.95$  can be achieved with 2 or 3 participants. And second, as mentioned before, estimating effects from pilot data is problematic, as it biases the results [@albersWhenPowerAnalyses2018]. 
+
+For this reason, we decided to maintain the distributions of probabilities for the first Tempo level (Low), as it is a good starting point to estimate the distribution of ratings that participants would assign, but simulated the second level (Tempo = High) with a much more conservative effect of 1 in all cases. 
+
+```{r cache = TRUE}
+# Density ratings for group music
+dat.den.gr <- clmm_generate_data(n_participants = 10000,
+                                 n_trials = 3,
+                                 control_distribution = c(.04, .11, .59, .22, .04),
+                                 effect = 0.4,
+                                 participant_variation = 1,
+                                 within_subject = TRUE,
+                                 control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Density.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Group", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+
+# Density ratings for solo music
+dat.den.so <- clmm_generate_data(n_participants = 10000,
+                                 n_trials = 3,
+                                 control_distribution = c(.55, .30, .04, .10, .01),
+                                 effect = 0.4,
+                                 participant_variation = 1,
+                                 within_subject = TRUE,
+                                 control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Density.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Solo", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+
+# Arousal ratings for group music
+dat.aro.gr <- clmm_generate_data(n_participants = 10000,
+                                 n_trials = 3,
+                                 control_distribution = c(.11, .11, .52, .19, .07),
+                                 effect = 0.4,
+                                 participant_variation = 1,
+                                 within_subject = TRUE,
+                                 control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Arousal.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Group", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+
+# Arousal ratings for solo music
+dat.aro.so <- clmm_generate_data(n_participants = 10000,
+                                 n_trials = 3,
+                                 control_distribution = c(.43, .41, .14, .01, .01),
+                                 effect = 0.4,
+                                 participant_variation = 1,
+                                 within_subject = TRUE,
+                                 control_weight = .5) |>
+  mutate(group = ifelse(group == 0, "Low", "High")) |>
+  dplyr::rename(Arousal.tempo = pas) |>
+  dplyr::rename(Tempo = group) |>
+  dplyr::rename(Participant = id) |>
+  mutate(Participant = paste0("p", Participant)) |>
+  select(1:3) |>
+  mutate(pair = rep(1:3, times = 20000)) |>
+  mutate(Participant.country = rep(rep(c("Iran", "Canada", "Japan"), each = 10000), 2)) |>
+  mutate(Music.country = rep(c("Iran", "Canada", "Japan"), times = 20000)) |>
+  mutate(Solo.group = rep("Solo", TIMES = 60000)) |>
+  select(c(1,6,5,2,7,3))
+```
+
+Again, we then merged these four data frames to obtain a final simulated data frame.
+
+```{r message=FALSE, cache=TRUE}
+dat.sim <- left_join(bind_rows(dat.den.gr, dat.den.so),
+                     bind_rows(dat.aro.gr, dat.aro.so),
+                     relationship = "many-to-many") |> 
+  mutate(Tempo = fct_relevel(Tempo, c("Low", "High")))
+
+# Assign unique id to pairs
+uniqueval <- unique(dat.sim[, c("Participant", "Music.country", "Solo.group")])
+dat.sim$groupid <- 0
+for (i in 1:dim(uniqueval)[1]) {
+  idx <- dat.sim$Participant == uniqueval$Participant[i] & 
+    dat.sim$Music.country == uniqueval$Music.country[i] & 
+    dat.sim$Solo.group == uniqueval$Solo.group[i]
+  dat.sim$groupid[idx] <- i
+}
+```
+
+The distribution of these simulated data is represented in \@ref(fig:final-sim)
+
+```{r final-sim, cache = TRUE, fig.height = 5, fig.cap = "Distribution of results from a conservative simulated distribution for ratings of both Density (**A**) and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low)."}
+# Plot distribution of results for density ratings
+p3a <- ggplot(dat.sim, aes(x = Density.tempo, y = after_stat(density),
+                           fill = Tempo, color = Tempo)) +
+  scale_fill_hue(direction = -1) + scale_colour_hue(direction = -1) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 1) +
+  labs(y= "Probability", x = "Rating") +
+  geom_text(aes(label = format(after_stat(density), digits = 1), y= after_stat(density)), 
+            stat= "bin", binwidth = 1, 
+            vjust = -0.2,
+            show.legend = FALSE) +
+  facet_wrap(~Solo.group)
+
+# Plot distribution of results for arousal ratings
+p3b <- ggplot(dat.sim, aes(x = Arousal.tempo, y = after_stat(density),
+                           fill = Tempo, color = Tempo)) +
+  scale_fill_hue(direction = -1) + scale_colour_hue(direction = -1) +
+  geom_histogram(alpha = 0.3, position = "identity", binwidth = 1) +
+  labs(y= NULL, x = "Rating") +
+  geom_text(aes(label = format(after_stat(density), digits = 1), y= after_stat(density)), 
+            stat= "bin", binwidth = 1, 
+            vjust = -0.2,
+            show.legend = FALSE) +
+  facet_wrap(~Solo.group)
+
+# Arrange plots
+p3 <- ggarrange(p3a +
+                  labs(subtitle = "Density"), 
+                p3b  +
+                  labs(subtitle = "Arousal"),
+                common.legend = TRUE,
+                legend = "bottom",
+                labels = "AUTO")
+p3
+```
+
+## Comparisons of the distribuition of results between pilot and simulated data
+
+```{r fig.height = 12, fig.cap = "Distribution of results of ratings of both Density and Arousal (**B**), by Instrumentation (Group, Solo), and Tempo (High, Low). **A** pilot data; **B** simulation replicating pilot data distribution; **C** simulation with a more conservative effect."}
+p4 <- ggarrange(ggarrange(p1a + labs(title = "Pilot data"), 
+                          p1b + labs(title = " "),
+                          legend = "none"), 
+                ggarrange(p2a + labs(title = "Simulation (pilot data replication)"), 
+                          p2b + labs(title = " "),
+                          legend = "none"),
+                ggarrange(p3a + labs(title = "Final simulation (conservative effect)"), 
+                          p3b + labs(title = " "),
+                          common.legend = TRUE, legend = "bottom"),
+                common.legend = TRUE,
+                labels = "AUTO",
+                nrow = 3,
+                heights = c(1,1,1.1))
+p4
+```
+
+# Power analysis {#power-section}
+
+Using the final, simulated population (*N* = 10,000 participants, with 6 paired observations per participant), we conducted a simulation-based power analysis. To do this, we first defined the desired number of simulations, the sample size (per country) of each simulation, and the $\alpha$ value (significance level) for all statistical tests:
+
+```{r}
+# Number of simulations to run
+num_sims.clmm = 100 
+
+# Sample size for each simulation (number of participants per country)
+sample_size.clmm = 80 
+
+# Significance level
+alpha.clmm = 0.05
+```
+
+Then, models were fitted from the defined `r number(num_sims.clmm, big.mark = ",")` random samples extracted from the simulated population. 
+
+From each sample, two Cumulative Link Mixed Models (CLMM) were fitted [see e.g., @taylorRatingNormsShould2022]: one for Density ratings, and one for arousal ratings. All models were fitted with the following call, simply changing the dependent variable (DV): `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. 
+
+Thus, all models had the same structure, which included the main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. 
+
+For each random sample, we adjusted the number of participants per country (in this case, *n* = `r sample_size.clmm`) to achieve the target statistical power of at least $1 - \beta = 0.95$ for both the Density and Arousal models, for the contrast between Tempo levels (i.e., averaged over the levels of instrumentation, participant country and music country).
+
+## Select random samples
+
+```{r cache = TRUE}
+# Get participant IDs
+part <- dat.sim  |> 
+  group_by(Participant.country) |>
+  distinct(Participant) |>
+  ungroup()
+
+# Select samples of random participants 
+samples.clmm <- map_dfr(seq_len(num_sims.clmm), ~part |>
+                        sample_n(sample_size.clmm) |>
+                        mutate(sample.clmm = as.factor(.x)))
+
+# Final data base of data for each participant selected for each sample
+samples.clmm.long <- left_join(samples.clmm, dat.sim, by = c("Participant", 
+                                                             "Participant.country"),
+                                relationship = "many-to-many") |>
+  mutate(Density.tempo = as.factor(Density.tempo)) |>
+  mutate(Arousal.tempo = as.factor(Arousal.tempo)) |>
+  mutate(Tempo = as.factor(Tempo))
+```
+
+## Visual density power analysis
+
+Please be aware that this part of the simulation can take many ours (or even days) to run.
+
+```{r power-density, cache = TRUE, warning = FALSE, message = FALSE, error = FALSE}
+# Create empty data frame
+clmm.comps.den <- data.frame(Sample = 1:num_sims.clmm)
+
+# Loop to fit a model for each random sample and extract the p-value of the Tempo contrasts
+for (i in 1:num_sims.clmm){
+  samp <- samples.clmm.long |>
+    filter(sample.clmm == i)
+  tryCatch(mod <- clmm(Density.tempo ~ 
+                         Tempo * Solo.group * Participant.country * Music.country + 
+                         (1 + Tempo | Participant), data = samp),
+           error = function(e) {})
+  tryCatch(comp <- emmeans(mod, pairwise~Tempo),
+           error = function(e) {})
+  clmm.comps.den$p[i] <- round(data.frame(comp$contrast)$p.value, 3)
+  clmm.comps.den$`Statistical signicance`[i] <- ifelse(clmm.comps.den$p[i] <= alpha.clmm, 
+                                                       "Significant", "Non-significant")
+}
+
+# Calculate power (proportion of simulations in which the Tempo contrast was significant)
+power.clmm.den <- sum(clmm.comps.den$`Statistical signicance` == "Significant")/num_sims.clmm
+```
+
+## Arousal power analysis
+
+Again, please keep in mind that this part of the simulation can take many ours (or even days) to run.
+
+```{r power-arousal, cache = TRUE, warning = FALSE, message = FALSE, error = FALSE}
+# Create empty data frame
+clmm.comps.aro <- data.frame(Sample = 1:num_sims.clmm)
+
+# Loop to fit a model for each random sample and extract the p-value of the Tempo contrast
+for (i in 1:num_sims.clmm){
+  samp <- samples.clmm.long |>
+    filter(sample.clmm == i)
+  tryCatch(mod <- clmm(Arousal.tempo ~ 
+                         Tempo * Solo.group * Participant.country * Music.country + 
+                         (1 + Tempo | Participant), data = samp),
+           error = function(e) {})
+  tryCatch(comp <- emmeans(mod, pairwise~Tempo),
+           error = function(e) {})
+  clmm.comps.aro$p[i] <- round(data.frame(comp$contrast)$p.value, 3)
+  clmm.comps.aro$`Statistical signicance`[i] <- ifelse(clmm.comps.aro$p[i] <= alpha.clmm, 
+                                                       "Significant", "Non-significant")
+}
+
+# Calculate power (proportion of simulations in which the Tempo contrast was significant)
+power.clmm.aro <- sum(clmm.comps.aro$`Statistical signicance` == "Significant")/num_sims.clmm
+```
+
+## Achieved power plot
+
+```{r fig.cap = "Histogram of *p*-values for the contrasts between Tempo conditions (Low, High) for all simulations. The estatistical power is the proportion of significant results. Significant results are in red."}
+p5a <- ggplot(clmm.comps.den, aes(x = p, fill = `Statistical signicance`)) +
+  scale_fill_hue(direction = -1) +
+  geom_histogram(bins = 1/alpha.clmm, breaks = seq(0, 1, alpha.clmm)) +
+  labs(y = "Count", x = "p-value", title = "Density") +
+  annotate("text", x = 0.5, 
+           y = sum(clmm.comps.den$`Statistical signicance` == "Significant") * 0.9,
+           label = paste0("Power = ", round(power.clmm.den, 3),
+                          "\nSample size = ", sample_size.clmm,
+                          " participants per country\n(6 paired responses per participant)"))
+
+p5b <- ggplot(clmm.comps.aro, aes(x = p, fill = `Statistical signicance`)) +
+  scale_fill_hue(direction = -1) +
+  geom_histogram(bins = 1/alpha.clmm, breaks = seq(0, 1, alpha.clmm)) +
+  labs(y = "Count", x = "p-value", title = "Arousal") +
+  annotate("text", x = 0.5, 
+           y = sum(clmm.comps.aro$`Statistical signicance` == "Significant") * 0.9, 
+           label = paste0("Power = ", round(power.clmm.aro, 3), 
+                          "\nSample size = ", sample_size.clmm, 
+                          " participants per country\n(6 paired responses per participant)"))
+
+p5 <- ggarrange(p5a, p5b,
+                common.legend = TRUE,
+                legend = "bottom",
+                labels = "AUTO")
+p5
+```
+
+# Analysis script with example data  {#example-data}
+
+Here, using a randomly selected sample, we fit one model as if it was the data collected from the experiment. This is not only to make sure that the data are sufficient and the structure is adequate to fit the model, but to plan in advance all the code.
+
+```{r}
+set.seed(1)
+# Select a random sample
+ex.data <- samples.clmm.long  |> 
+  filter(sample.clmm == sample(1:num_sims.clmm, 1, replace = TRUE)) |> 
+  mutate_if(is.character,as.factor)
+```
+
+Because only the effect of Tempo was predicted and simulated *a-priori*, all other effects and interactions are completely random.
+
+```{r fig.height = 5, fig.cap="Data for Density and Arousal ratings from a ramdomly selected, simulated sample. Dashed linesrepresent the within-subject effect of the Tempo manipulation.", message = FALSE, warning = FALSE}
+p6a <- ggplot(ex.data, aes(x = Tempo, y = Density.tempo, 
+                           color = Participant.country, shape = Music.country)) +
+  geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
+  geom_point(position = position_dodge(0.3), size = 3) +
+  geom_line(aes(group = factor(groupid)), 
+            linewidth = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
+  labs(y= "Density", x = "Tempo", title = "Density") +
+  scale_x_discrete(limits = c("Low", "High")) + 
+  scale_size_discrete(breaks = c("Solo", "Group")) + 
+  theme(plot.title = element_text(face = "bold", hjust = 0.5)) + 
+  facet_wrap(~Solo.group)
+
+p6b <- ggplot(ex.data, aes(x = Tempo, y = Arousal.tempo, 
+                           color = Participant.country, shape = Music.country)) +
+   geom_violin(aes(group = Tempo), draw_quantiles = 0.5) +
+  geom_point(position = position_dodge(0.3), size = 3) +
+  geom_line(aes(group = factor(groupid)), 
+            linewidth = 0.5, linetype = "dashed", position = position_dodge(0.3), alpha = 0.5) +
+  labs(y= "Arousal", x = "Tempo", title = "Arousal") +
+  scale_x_discrete(limits = c("Low", "High")) + 
+  scale_size_discrete(breaks = c("Solo", "Group")) + 
+  theme(plot.title = element_text(face = "bold", hjust = 0.5)) + 
+  facet_wrap(~Solo.group)
+
+p6 <- ggarrange(p6a, p6b,
+                common.legend = TRUE,
+                legend = "bottom")
+p6
+```
+
+We fitted the models with the same structure, simply changing the dependent variable (DV): `clmm(DV ~ Tempo * Solo.group * Participant.country * Music.country + (1 + Tempo | Participant)`. To obtain *p*-values that represent main effects and interactions in an ANOVA-type manner (i.e. the intercept is the grand mean of all cells, and estimates are differences between each category mean and the mean of all categories), we used *sum-to-zero* contrasts[^1] [see e.g., @kaufmanContrastCodingLeast1974; @keppelDataAnalysisResearch1989].
+
+[^1]: We did not do this for the models fitted for the power analysis, as it would not change the contrasts between Tempo conditions, but it is useful to display the full model results as we used `summary` (regression-type tables of estimates) instead on ANOVA-type tables (which are not available for models of `clmm` class).
+
+In all cases, results are for main effects and all possible interactions between Tempo (Low, High), Instrumentation (Group, Solo), Participant country (Iran, Canada, Japan), and Music country (Iran, Canada, Japan) as fixed effects, as well as random intercepts and random slopes between Tempo conditions for each participant. *High* was used as reference category for Tempo, and *Japan* for both participant and music country. Contrasted levels are in square brackets. Significant effects are in bold.
+
+As pointed out in a comment by @532079, author of the `emmeans` package [-@emmeanscit], it is crucial to consider that ordinal models rely on estimates of a dependent variable (*y*) following a logistic distribution. However, *y* itself cannot be directly observed; rather, only the interval in which it lies is observable. Consequently, *y* is an unobserved latent variable. Thus, in order to interpret the estimates, the model also calculates the thresholds (cut points) for the ordinal levels of the dependent variable.
+
+## Visual density example model
+
+```{r mod-ex-den, warning = FALSE, cache = TRUE}
+# Fit Density model
+options(contrasts = c("contr.sum","contr.poly"))
+model.den <- clmm(Density.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
+                    (1 + Tempo | Participant),
+                  data = ex.data)
+
+# Summary table
+summary.sig(model.den, "Visual density ratings model summary")
+```
+
+## Arousal example model
+
+```{r mod-ex-aro, warning = FALSE, cache = TRUE}
+# Fit Arousal model
+options(contrasts = c("contr.sum","contr.poly"))
+model.aro <- clmm(Arousal.tempo ~ Tempo * Solo.group * Participant.country * Music.country + 
+                    (1 + Tempo | Participant),
+                  data = ex.data)
+
+# Summary table
+summary.sig(model.aro, "Arousal ratings model summary")
+```
+
+## Estimated marginal means and confidence intervals for both models
+
+Estimated marginal means and confidence intervals for this simulation are represented in \@ref(fig:plot-mod-ex).
+
+```{r plot-mod-ex, warning = FALSE, cache = TRUE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo from a ramdomly selected, simulated sample. Columns represent data from simulated participants from each country, while rows represent the simulated response to music from each country."}
+p7a <- emmip(model.den, Solo.group ~ Tempo | Participant.country + Music.country,
+      CIs = TRUE) +
+  labs(title = "Density")
+
+p7b <- emmip(model.aro, Solo.group ~ Tempo | Participant.country + Music.country,
+      CIs = TRUE) +
+  labs(title = "Arousal")
+
+p7 <- ggarrange(p7a, p7b,
+                common.legend = TRUE,
+                legend = "bottom")
+p7
+```
+
+## Effect of Tempo
+
+Estimated marginal mean and contrast between the levels of Tempo (Low, High) averaged over the levels of instrumentation (`Solo.group`), participant country (`Participant.country`) and music country (`Music.country`). To obtain the estimated distributions of the ordinal levels of the dependent variable, the argument `mode = "mean.class"` can be added to the `emmeans` function [see @532079].
+
+### Visual density model
+
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the `emmeans` function from the `emmeans` package [@emmeanscit].
+
+```{r tab-den-emms, message = FALSE}
+tempo.contr(model.den)
+```
+
+Figure of estimated marginal means and contrasts between tempo conditions.
+
+```{r fig.height = 4.5, fig.width = 6, message = FALSE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo on Visual density ratings, from a ramdomly selected, simulated sample, averaged across the levels of instrumentation, participant country and music country."}
+emmip(model.den, ~Tempo, CIs = TRUE)
+```
+
+### Arousal model
+
+Table of estimated marginal means and contrasts between tempo conditions. All estimated marginal means and contrasts were calculated using the `emmeans` function from the `emmeans` package [@emmeanscit].
+
+```{r tab-aro-emms, message = FALSE}
+tempo.contr(model.aro)
+```
+
+Figure of estimated marginal means and contrasts between tempo conditions.
+
+```{r fig.height = 4.5, fig.width = 6, message = FALSE, fig.cap = "Estimated marginal means and confidence intervals for the within-subject effects of Tempo on Arousal ratings, from a ramdomly selected, simulated sample, averaged across the levels of instrumentation, participant country and music country."}
+emmip(model.aro, ~Tempo, CIs = TRUE)
+```
+
+```{r echo = FALSE}
+# This is to play a sound when all code finishes running (as it takes many hours). 
+# Not printed in output
+library(beepr)
+beep(sound = 3)
+```
+
+# Conclusion
+
+Based on the conducted power analysis (section \@ref(power-section)), it can be inferred that a sample size of `r sample_size.clmm` participants per country (`r sample_size.clmm*3` participants in total) would yield a statistical power ($1 - \beta$) greater than 0.95 for the planned contrasts between Tempo conditions when the effect size of this Tempo manipulation is 1. While the pilot data indicated a larger effect size, a conservative estimate was utilized to ensure sufficient statistical power even if the true effect size is significantly smaller than observed in the pilot study. This approach guarantees a high likelihood of correctly rejecting the null hypothesis in the presence of a true effect, providing confidence in the study's ability to detect meaningful findings.
+
+In addition, as shown when fitting and reporting the models with a randomly selected sample (section \@ref(example-data)), the sample size and data structure are adequate to fit the planned models.
+
+# References {.unnumbered #refs}
+
+\begin{multicols}{2}
+\AtNextBibliography{\footnotesize}
+\printbibliography[heading=none]
+\normalsize
+\end{multicols}
+
+\def\printbibliography{}
+
+# Session info (for reproducibility) {.unnumbered #session}
+
+```{r results = "hold"}
+library(pander)
+pander(sessionInfo(), locale = FALSE)
+```
