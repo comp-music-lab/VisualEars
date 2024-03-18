@@ -167,7 +167,7 @@ p1
 dat.den.gr.PILOT <- clmm_generate_data(n_participants = 100,
                                        n_trials = 3,
                                        control_distribution = c(.04, .11, .59, .22, .04),
-                                       effect = 0.4,
+                                       effect = 1,
                                        participant_variation = 1,
                                        within_subject = TRUE,
                                        control_weight = .5) |>
@@ -187,7 +187,7 @@ dat.den.gr.PILOT <- clmm_generate_data(n_participants = 100,
 dat.den.so.PILOT <- clmm_generate_data(n_participants = 100,
                                        n_trials = 3,
                                        control_distribution = c(.55, .30, .04, .10, .01),
-                                       effect = 0.4,
+                                       effect = 1,
                                        participant_variation = 1,
                                        within_subject = TRUE,
                                        control_weight = .5) |>
@@ -207,7 +207,7 @@ dat.den.so.PILOT <- clmm_generate_data(n_participants = 100,
 dat.aro.gr.PILOT <- clmm_generate_data(n_participants = 100,
                                        n_trials = 3,
                                        control_distribution = c(.11, .11, .52, .19, .07),
-                                       effect = 0.4,
+                                       effect = 1,
                                        participant_variation = 1,
                                        within_subject = TRUE,
                                        control_weight = .5) |>
@@ -227,7 +227,7 @@ dat.aro.gr.PILOT <- clmm_generate_data(n_participants = 100,
 dat.aro.so.PILOT <- clmm_generate_data(n_participants = 100,
                                        n_trials = 3,
                                        control_distribution = c(.43, .41, .14, .01, .01),
-                                       effect = 0.4,
+                                       effect = 1,
                                        participant_variation = 1,
                                        within_subject = TRUE,
                                        control_weight = .5) |>
@@ -258,7 +258,7 @@ model.den <- clmm(Density.tempo ~ Tempo * Solo.group +
                     (1 + Tempo | Participant),
                   data = dat.sim.PILOT)
 
-summary.sig(model.den, "Visual density ratings model summary")
+#summary.sig(model.den, "Visual density ratings model summary")
 
 coefs.den <- data.frame(summary(model.den)$coefficients)
 confs.den <- data.frame(confint(model.den))
@@ -271,10 +271,10 @@ data.frame(emms) |>
                                             ifelse(emmean <= coefs.den$Estimate[4], 4, 5)))))
 
 emmip(model.den, ~ Tempo | Solo.group, CIs = TRUE) +
-  geom_hline(yintercept = c(data.frame(summary(model.den)$coefficients)$Estimate[1:4]))
+  geom_hline(yintercept = coefs.den$Estimate[1:4])
 
 emmip(model.den, ~ Tempo , CIs = TRUE) +
-  geom_hline(yintercept = c(data.frame(summary(model.den.gr)$coefficients)$Estimate[1:4]))
+  geom_hline(yintercept = coefs.den$Estimate[1:4])
 
 p2a <- ggplot(data, aes(x = density.tempo, y = after_stat(density),
                         fill = Tempo, color = Tempo)) +
@@ -302,16 +302,20 @@ ggarrange(p2a, p2b)
 
 
 emmip(model.den, ~ Tempo | Solo.group, CIs = TRUE) +
-  geom_hline(yintercept = coefs.den$Estimate[1:4]) +
+  geom_hline(yintercept = coefs.den$Estimate[1:4],
+             color = "darkred") +
   annotate('rect', xmin=-Inf, xmax=Inf, 
            ymin = confs.den$X2.5..[1:4], 
            ymax = confs.den$X97.5..[1:4], 
-           alpha=.2, fill='black') +
+           alpha=.2, fill='darkred') +
   scale_y_continuous("Linear prediction", 
     sec.axis = sec_axis(~ .,
                         breaks = coefs.den$Estimate[1:4],
                         labels = row.names(coefs.den)[1:4], 
-                        name = "Visual density"))
+                        name = "Visual density")) +
+  theme(axis.title.y.right = element_text(color="darkred"),
+        axis.text.y.right  = element_text(color="darkred"),
+        axis.ticks.y.right = element_line(color="darkred"))
 
 
 emmip(model.den, ~ Tempo | Solo.group, CIs = TRUE) +
@@ -321,15 +325,15 @@ emmip(model.den, ~ Tempo | Solo.group, CIs = TRUE) +
            ymin = confs.den$X2.5..[1:4], 
            ymax = confs.den$X97.5..[1:4], 
            alpha = 0.1, fill='darkred') +
-  scale_y_continuous("Linear prediction (latent variable)", 
+  scale_y_continuous("Linear prediction (latent, continuous variable)", 
                      sec.axis = sec_axis(~ .,
-                                         breaks = c(-2.8, 
+                                         breaks = c(-2.5, 
                                                     mean(coefs.den$Estimate[1:2]), 
                                                     mean(coefs.den$Estimate[2:3]), 
                                                     mean(coefs.den$Estimate[3:4]), 
-                                                    4.7),
+                                                    3.8),
                                          labels = 1:5, 
-                                         name = "Visual density (Likert)")) +
+                                         name = "Visual density (original Likert scale)")) +
   theme(axis.title.y.right = element_text(color="darkred"),
         axis.text.y.right  = element_text(color="darkred"),
         axis.ticks.y.right = element_line(color="darkred"))
